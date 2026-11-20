@@ -1,0 +1,1178 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NOVAH DJ · David Pando</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-192.png">
+<meta name="theme-color" content="#08060c">
+<!-- 14/11/2026 · MAQUETA (no es la app): la tarjeta «Hoy» dentro del holograma del Lanzador.
+     Mismos colores, letras y cristal que lanzador.html. NOVAH DJ para David Pando: las tareas son de EJEMPLO. -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lato:wght@300;400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#070b16; --bg2:#0e1730;
+    --cyan:#5fd2e8; --blue:#4a86d8; --oro:#d8b65a; --verde:#54e0a0; --rojo:#ef8f7a;
+    --glass:rgba(28,44,80,.42); --glass-2:rgba(40,60,104,.55);
+    --glass-brd:rgba(130,190,235,.40); --glow:rgba(95,210,232,.55);
+    --text:#eaf1fb; --muted:#9fb3d2; --dim:#62748f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{font-family:'Lato',sans-serif;color:var(--text);background:#05070d;display:flex;align-items:center;justify-content:center;user-select:none}
+  .holo{position:relative;width:min(1240px,calc(100% - 36px));height:min(760px,calc(100% - 36px));border-radius:28px;overflow:hidden;
+       background:radial-gradient(900px 620px at 72% 28%,#1b2c54 0%,#0e1730 45%,#070b16 100%);
+       border:1px solid rgba(130,190,235,.5);
+       box-shadow:0 0 0 1px rgba(95,210,232,.14),0 0 26px rgba(95,210,232,.38),inset 0 0 70px rgba(95,210,232,.07);
+       animation:encender .75s cubic-bezier(.2,.8,.2,1) both}
+  .holo::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+       background:radial-gradient(520px 420px at 78% 30%,var(--glow) 0%,transparent 62%),radial-gradient(420px 420px at 8% 92%,rgba(74,134,216,.45) 0%,transparent 62%)}
+  .holo::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.22;
+       background-image:linear-gradient(rgba(130,190,235,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(130,190,235,.6) 1px,transparent 1px);
+       background-size:44px 44px;-webkit-mask:radial-gradient(circle at 38% 55%,#000 0%,rgba(0,0,0,.55) 60%,transparent 90%)}
+  @keyframes encender{0%{opacity:0;transform:scaleX(.15) scaleY(.004);filter:brightness(3)}28%{opacity:1;transform:scaleX(1) scaleY(.004);filter:brightness(3)}70%{transform:scaleX(1) scaleY(1.015);filter:brightness(1.25)}100%{opacity:1;transform:none;filter:none}}
+
+  .barra{position:absolute;top:0;left:0;right:0;height:64px;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px}
+  .marca{display:flex;align-items:center;gap:10px;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--cyan)}
+  .marca .ini{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:.95rem;letter-spacing:0;color:#06223a;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 16px var(--glow)}
+  .pestanas{display:flex;gap:6px;margin-left:22px}
+  .pest{font-family:inherit;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 16px;border-radius:20px;cursor:pointer;
+        border:1px solid var(--glass-brd);background:rgba(10,20,40,.45);color:var(--muted)}
+  .pest.on{color:#06223a;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 16px var(--glow);border-color:transparent}
+  .reloj{display:flex;align-items:center;gap:16px}
+  .hora{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:500;font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(95,210,232,.35)}
+  .fecha{font-size:.7rem;color:var(--muted);letter-spacing:.06em;text-align:right;line-height:1.35}
+  .cerrar{width:34px;height:34px;border-radius:50%;border:1px solid var(--glass-brd);background:rgba(10,20,40,.45);color:var(--muted);font-size:1rem;display:grid;place-items:center}
+
+  .figura{position:absolute;right:0;top:0;bottom:0;width:40%;z-index:1;pointer-events:none;overflow:hidden;
+       -webkit-mask-image:linear-gradient(to left,#000 38%,transparent 96%);mask-image:linear-gradient(to left,#000 38%,transparent 96%)}
+  .figura .img{position:absolute;inset:-14px;background:url('hoy/fondo.png') center 8%/cover no-repeat;filter:saturate(.9) contrast(1.06) brightness(.82)}
+  .figura::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(95,210,232,.075) 0 1px,transparent 1px 3px);mix-blend-mode:screen}
+
+  /* ---------- HOY ---------- */
+  /* placa fotografiada en perspectiva: una franja enfocada y lo demás desenfocado (como una foto macro) */
+  .luces{overflow:hidden;-webkit-mask-image:linear-gradient(to right,#000 0%,#000 66%,transparent 96%);mask-image:linear-gradient(to right,#000 0%,#000 66%,transparent 96%)}
+  .camara{position:absolute;left:-30%;right:-30%;top:-10%;bottom:-40%;perspective:900px;perspective-origin:50% 0%}
+  .camara canvas{position:absolute;inset:0;width:100%;height:100%;transform-origin:50% 100%;transform:rotateX(52deg) scale(1.05)}
+  #placaBorrosa{filter:blur(6px) brightness(.85);opacity:.75}
+  #placaNitida{filter:blur(.6px);-webkit-mask-image:linear-gradient(to bottom,transparent 38%,#000 58%,#000 70%,transparent 86%);mask-image:linear-gradient(to bottom,transparent 38%,#000 58%,#000 70%,transparent 86%);opacity:.9}
+  .niebla{position:absolute;inset:0;pointer-events:none;
+         background:linear-gradient(to bottom,rgba(7,11,22,.85) 0%,rgba(7,11,22,.35) 30%,rgba(7,11,22,.15) 60%,rgba(7,11,22,.55) 100%),
+                    radial-gradient(ellipse 70% 60% at 45% 60%,transparent 40%,rgba(7,11,22,.55) 100%)}
+  .luces{position:absolute;left:0;top:0;bottom:0;width:72%;z-index:2;pointer-events:none;
+         background:radial-gradient(260px 200px at 18% 42%,rgba(216,182,90,.10),transparent 70%),
+                    radial-gradient(300px 220px at 62% 70%,rgba(74,134,216,.28),transparent 70%),
+                    radial-gradient(220px 160px at 45% 22%,rgba(216,182,90,.10),transparent 70%)}
+  .izq{position:absolute;left:0;top:64px;bottom:0;width:72%;z-index:4;padding:6px 34px 26px 44px;display:flex;flex-direction:column;gap:14px}
+  .cab{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+  .saludo h1{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;font-size:2.1rem;text-shadow:0 0 24px rgba(95,210,232,.35)}
+  .saludo .sub{color:var(--muted);font-size:.9rem;margin-top:4px}
+  .progreso{display:flex;align-items:center;gap:14px}
+  .anillo{width:74px;height:74px;position:relative}
+  .anillo svg{transform:rotate(-90deg)}
+  .anillo .num{position:absolute;inset:0;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:1.25rem}
+  .anillo .num small{display:block;font-family:'Lato';font-size:.55rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center;margin-top:-4px}
+  /* BOLA DE CRISTAL (14/11, su imagen de referencia): circuitos dentro que se ENCIENDEN al marcar tareas */
+  .progreso{gap:22px}
+  .esfera-caja{display:flex;align-items:center;gap:14px}
+  .esfera{position:relative;width:150px;height:150px;border-radius:50%;
+          box-shadow:0 0 34px rgba(95,210,232,.32),0 22px 34px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.18)}
+  .esfera canvas{width:100%;height:100%;border-radius:50%;display:block}
+  .esfera::after{content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
+          background:radial-gradient(circle at 50% 50%,transparent 56%,rgba(200,235,255,.06) 70%,rgba(220,245,255,.28) 88%,rgba(255,255,255,.7) 97%,rgba(255,255,255,.2) 100%)}
+  .esfera .reflejo{position:absolute;left:17%;top:9%;width:40%;height:25%;border-radius:50%;pointer-events:none;transform:rotate(-24deg);
+          background:radial-gradient(ellipse at 45% 45%,rgba(255,255,255,.85),rgba(255,255,255,.25) 50%,transparent 74%);filter:blur(1.5px)}
+  .esfera .reflejo.r2{left:62%;top:72%;width:20%;height:9%;transform:rotate(-30deg);opacity:.35}
+  .esfera{animation:flota 6s ease-in-out infinite}
+  @keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .esfera .reflejo{animation:respira 6s ease-in-out infinite}
+  @keyframes respira{50%{opacity:.7}}
+  .esfera.destello{animation:flota 6s ease-in-out infinite,destello .9s ease}
+  @keyframes destello{40%{box-shadow:0 0 70px rgba(95,210,232,.75),0 22px 34px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.3)}}
+  .cuenta{font-family:'Playfair Display',serif;font-size:1.7rem;line-height:1;text-shadow:0 0 18px rgba(95,210,232,.35)}
+  .cuenta small{display:block;font-family:'Lato';font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .escuchar{font-family:inherit;font-size:.82rem;font-weight:700;padding:11px 18px;border-radius:12px;cursor:pointer;border:none;color:#06223a;
+            background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 20px rgba(95,210,232,.4);display:flex;align-items:center;gap:8px}
+  .escuchar.hablando{animation:late 1s ease-in-out infinite}
+  @keyframes late{50%{filter:brightness(1.35);box-shadow:0 0 34px var(--glow)}}
+
+  .lista{flex:1;display:flex;flex-direction:column;gap:10px;overflow:auto;padding-right:6px}
+  /* CRISTAL CON LENTE (14/11, referencia: la esfera de cristal con circuitos): casi sin color, el fondo se ve DEFORMADO
+     en los bordes como a través de un cristal grueso (filtro SVG #lente), canto brillante y un reflejo blanco arriba a la izquierda. */
+  .tarea{position:relative;display:flex;align-items:center;gap:16px;padding:14px 16px 14px 14px;border-radius:22px;
+         background:radial-gradient(ellipse 70% 120% at 42% 50%,rgba(5,10,24,.46),rgba(5,10,24,.18) 72%,transparent 100%),linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 40%,rgba(140,210,255,.04));
+         backdrop-filter:url(#lente) brightness(1.18) saturate(150%);-webkit-backdrop-filter:url(#lente) brightness(1.18) saturate(150%);
+         box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1.5px 1px rgba(255,255,255,.65),inset 0 -1.5px 1px rgba(160,220,255,.25),
+                    inset 0 0 16px rgba(255,255,255,.10),inset 0 0 3px rgba(255,255,255,.25),0 0 22px rgba(95,210,232,.10);transition:box-shadow .35s}
+  .tarea::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;z-index:0;
+         background:radial-gradient(ellipse 60% 140% at 50% 50%,transparent 62%,rgba(200,235,255,.10) 88%,rgba(255,255,255,.20) 100%)}
+  .tarea::after{content:'';position:absolute;left:3%;top:3px;width:26%;height:44%;pointer-events:none;border-radius:50%;z-index:0;
+         background:radial-gradient(ellipse at 40% 40%,rgba(255,255,255,.42),rgba(255,255,255,.10) 45%,transparent 72%);filter:blur(2px);opacity:.75}
+  .tarea:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 0 1.5px 1px rgba(255,255,255,.8),inset 0 0 20px rgba(255,255,255,.14),0 0 28px rgba(95,210,232,.25)}
+  .tarea>*{position:relative;z-index:1}
+  .tarea.urgente{box-shadow:inset 0 0 0 1px rgba(240,215,138,.45),inset 0 1.5px 1px rgba(255,240,190,.8),inset 0 0 16px rgba(216,182,90,.14),0 0 26px rgba(216,182,90,.22)}
+  .casilla{flex:0 0 46px;height:46px;border-radius:50%;border:2px solid rgba(130,190,235,.45);background:transparent;cursor:pointer;
+           display:grid;place-items:center;transition:all .25s}
+  .casilla:hover{border-color:var(--cyan);box-shadow:0 0 16px var(--glow)}
+  .casilla svg{opacity:0;transform:scale(.4);transition:all .3s cubic-bezier(.3,1.6,.5,1)}
+  .tarea.hecha .casilla{background:var(--verde);border-color:var(--verde);box-shadow:0 0 18px rgba(84,224,160,.6)}
+  .tarea.hecha .casilla svg{opacity:1;transform:none}
+  .cuerpo{flex:1;min-width:0;text-shadow:0 1px 8px rgba(2,6,16,.9)}
+  .cuerpo .t{font-family:'Playfair Display',serif;font-size:1.22rem;line-height:1.2;transition:all .3s}
+  .cuerpo .d{font-size:.8rem;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cuerpo .d b{color:var(--cyan);font-weight:700}
+  .etq{font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid var(--glass-brd);color:var(--muted);margin-left:8px;vertical-align:middle;font-family:'Lato'}
+  .etq.oro{color:var(--oro);border-color:rgba(216,182,90,.6)}
+  .tarea.hecha .t{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(84,224,160,.7)}
+  .tarea.hecha{opacity:.62}
+  .abrir{flex:0 0 auto;font-family:inherit;font-size:.78rem;font-weight:700;padding:9px 15px;border-radius:10px;cursor:pointer;
+         border:1px solid rgba(255,255,255,.18);border-top-color:rgba(255,255,255,.4);background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.25);color:var(--text)}
+  .abrir:hover{border-color:var(--cyan);box-shadow:0 0 14px rgba(95,210,232,.35)}
+
+  .pie{display:flex;gap:12px}
+  .mini{flex:1;padding:12px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);border-top-color:rgba(255,255,255,.28);background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));backdrop-filter:blur(12px) saturate(160%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2);font-size:.8rem;color:var(--muted);line-height:1.55}
+  .mini h4{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+
+  /* aviso de las 18:30 */
+  .tarde{position:absolute;right:30px;bottom:30px;z-index:8;width:340px;padding:18px 20px;border-radius:18px;
+         background:linear-gradient(160deg,rgba(80,52,20,.75),rgba(40,30,20,.75));backdrop-filter:blur(14px);border:1px solid rgba(216,182,90,.7);
+         box-shadow:0 0 40px rgba(216,182,90,.35);transform:translateY(30px);opacity:0;pointer-events:none;transition:all .45s}
+  .tarde.ver{transform:none;opacity:1;pointer-events:auto}
+  .tarde h3{font-family:'Playfair Display',serif;font-weight:500;font-size:1.25rem;color:#f4dfa0;margin-bottom:6px}
+  .tarde p{font-size:.86rem;color:#ecdcc0;line-height:1.5}
+  .tarde .bot{margin-top:12px;display:flex;gap:8px}
+  .tarde button{font-family:inherit;font-size:.76rem;font-weight:700;padding:7px 12px;border-radius:9px;cursor:pointer;border:1px solid rgba(216,182,90,.6);background:rgba(20,14,6,.5);color:#f4dfa0}
+
+  .aviso{position:absolute;left:33%;bottom:24px;z-index:9;transform:translateX(-50%) translateY(14px);opacity:0;max-width:600px;text-align:center;
+       background:var(--glass-2);backdrop-filter:blur(10px);border:1px solid var(--glass-brd);padding:10px 16px;border-radius:12px;font-size:.84rem;transition:all .25s}
+  .aviso.ver{opacity:1;transform:translateX(-50%)}
+
+  .demo{position:fixed;left:14px;top:12px;z-index:20;font-size:.72rem;color:#8a97ad;display:flex;gap:8px;align-items:center}
+  .demo button{font-family:inherit;font-size:.72rem;padding:5px 10px;border-radius:8px;border:1px solid #33415c;background:#0c1322;color:#cfe0f5;cursor:pointer}
+
+  
+  .orbe{position:absolute;border-radius:50%;pointer-events:none;z-index:2;filter:blur(90px)}
+  .orbe.o1{width:420px;height:320px;left:6%;top:30%;background:#0ea5e9;opacity:.22;animation:deriva1 18s ease-in-out infinite}
+  .orbe.o2{width:460px;height:360px;left:34%;top:52%;background:#1e3a8a;opacity:.55;animation:deriva2 22s ease-in-out infinite}
+  .orbe.o3{width:300px;height:300px;right:6%;top:14%;background:#0ea5e9;opacity:.12}
+  @keyframes deriva1{50%{transform:translate(60px,-30px)}}
+  @keyframes deriva2{50%{transform:translate(-70px,20px)}}
+  .saludo h1,.cuerpo .t,.cuenta,.tarde h3{font-family:'Plus Jakarta Sans',sans-serif;font-style:normal;letter-spacing:-.01em}
+  .saludo h1{font-weight:600;font-size:2.05rem}
+  .cuerpo .t{font-weight:600;font-size:1.08rem}
+  .cuenta{font-weight:600}
+  .etq,.mini h4,.cuenta small,.pest,.marca{letter-spacing:.2em}
+  body{font-family:'Plus Jakarta Sans','Lato',sans-serif}
+
+  .lista{perspective:1200px;gap:12px}
+  .tarea{border-radius:18px;transform-style:preserve-3d;
+         background:radial-gradient(260px 120px at var(--mx,30%) var(--my,0%),rgba(160,230,255,.10),transparent 70%),
+                    linear-gradient(135deg,rgba(255,255,255,.09) 0%,rgba(255,255,255,.02) 100%);
+         backdrop-filter:url(#lente) blur(18px) saturate(140%);-webkit-backdrop-filter:url(#lente) blur(18px) saturate(140%);
+         border:1px solid rgba(255,255,255,.08);border-top:1px solid rgba(160,230,255,.35);
+         box-shadow:0 12px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.15);
+         transition:transform .25s ease,box-shadow .3s,opacity .4s,padding .4s,background .3s;
+         animation:aparece .6s cubic-bezier(.2,.8,.2,1) both}
+  .tarea:nth-child(2){animation-delay:.06s}.tarea:nth-child(3){animation-delay:.12s}.tarea:nth-child(4){animation-delay:.18s}.tarea:nth-child(5){animation-delay:.24s}
+  @keyframes aparece{from{opacity:0;transform:translateY(14px) translateZ(-40px)}}
+  .tarea::before{background:none}
+  .tarea::after{opacity:.45}
+  .tarea:hover{transform:translateY(-2px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));border-top-color:rgba(95,210,232,.85);
+         box-shadow:0 18px 40px rgba(0,0,0,.5),0 0 26px rgba(14,165,233,.22),inset 0 1px 0 rgba(160,230,255,.35)}
+  .tarea.urgente{border-top-color:rgba(240,215,138,.8);box-shadow:0 12px 32px rgba(0,0,0,.45),0 0 24px rgba(216,182,90,.18),inset 0 1px 0 rgba(255,240,190,.3)}
+  /* HECHAS: se hunden hacia el fondo */
+  .tarea.hecha{opacity:.45;padding-top:8px;padding-bottom:8px;border-top-color:rgba(255,255,255,.06);
+         background:linear-gradient(135deg,rgba(0,0,0,.25),rgba(0,0,0,.12));box-shadow:none;transform:scale(.985)}
+  .tarea.hecha::after{display:none}
+  .tarea.hecha .t{font-size:.98rem}
+  .tarea.hecha .d{display:none}
+
+  /* CASILLAS = bolitas de cristal (como la bola grande) */
+  .casilla{flex:0 0 40px;height:40px;border:none;position:relative;
+           background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(255,255,255,.06) 32%,rgba(10,30,50,.55) 70%,rgba(160,230,255,.25) 100%);
+           box-shadow:inset 0 0 0 1px rgba(255,255,255,.25),inset 0 -6px 10px rgba(0,0,0,.35),0 4px 10px rgba(0,0,0,.4)}
+  .casilla:hover{box-shadow:inset 0 0 0 1px rgba(160,230,255,.6),inset 0 -6px 10px rgba(0,0,0,.35),0 0 16px rgba(14,165,233,.45)}
+  .tarea.hecha .casilla{flex-basis:32px;height:32px;
+           background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.7),rgba(120,255,200,.6) 30%,rgba(30,160,110,.85) 72%,rgba(160,255,215,.5) 100%);
+           box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 0 14px rgba(84,224,160,.55)}
+  .tarea.hecha .casilla svg{width:16px;height:16px}
+
+  /* botones */
+  .abrir{border-radius:999px;padding:8px 16px;background:rgba(14,165,233,.06);border:1px solid rgba(95,210,232,.32);color:#cfeffc;box-shadow:none;backdrop-filter:blur(6px)}
+  .abrir:hover{background:rgba(14,165,233,.18);border-color:rgba(95,210,232,.85);color:#fff;box-shadow:0 0 18px rgba(14,165,233,.45),inset 0 0 10px rgba(95,210,232,.15)}
+  .escuchar{border-radius:999px;box-shadow:0 0 24px rgba(14,165,233,.55),0 0 60px rgba(14,165,233,.25),inset 0 1px 0 rgba(255,255,255,.5)}
+  .esfera{box-shadow:0 0 40px rgba(14,165,233,.45),0 0 90px rgba(14,165,233,.18),0 22px 34px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.18)}
+  .mini{background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.015));backdrop-filter:blur(18px) saturate(140%);
+        border:1px solid rgba(255,255,255,.07);border-top:1px solid rgba(160,230,255,.28);box-shadow:0 12px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)}
+
+  /* 14/11 · detrás de las tareas un FONDO DIFUMINADO (la escena del holograma muy desenfocada + puntos de luz) y
+     las tarjetas MÁS TRANSPARENTES, para que se vea a través y dé profundidad */
+  .difuso{position:absolute;left:-8%;top:-8%;width:82%;height:116%;z-index:1;pointer-events:none;
+          /* 14/11: sin la mujer vieja de las gafas (se veía su cara enorme detrás de las tareas): solo luces de color */
+          background:radial-gradient(40% 35% at 25% 30%,rgba(120,190,255,.55),transparent 70%),
+                     radial-gradient(45% 40% at 60% 70%,rgba(255,150,110,.35),transparent 70%),
+                     radial-gradient(35% 30% at 80% 20%,rgba(160,120,255,.30),transparent 70%);
+          filter:blur(38px) saturate(1.3) brightness(.8);opacity:.85}
+  .bokeh{position:absolute;left:0;top:0;width:72%;height:100%;z-index:2;pointer-events:none}
+  .bokeh i{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(170,230,255,.55),rgba(120,200,255,.15) 45%,transparent 70%);filter:blur(3px);animation:sube linear infinite}
+  @keyframes sube{from{transform:translateY(30px);opacity:0}15%{opacity:1}85%{opacity:1}to{transform:translateY(-60px);opacity:0}}
+  .tarea{background:radial-gradient(260px 120px at var(--mx,30%) var(--my,0%),rgba(190,240,255,.12),transparent 70%),
+                    linear-gradient(135deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,.01) 100%);
+         backdrop-filter:url(#lente) blur(8px) saturate(160%) brightness(1.08);-webkit-backdrop-filter:url(#lente) blur(8px) saturate(160%) brightness(1.08);
+         box-shadow:0 14px 34px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.22),inset 0 0 0 1px rgba(255,255,255,.04)}
+  .tarea.hecha{background:linear-gradient(135deg,rgba(255,255,255,.03),rgba(255,255,255,0));backdrop-filter:blur(4px)}
+  .mini{background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.01));backdrop-filter:blur(8px) saturate(160%)}
+
+  /* ===== 14/11 · ELLA VIVA (nivel 1): respira, te sigue con el ratón, visor de las gafas encendido, barrido de holograma,
+     y cuando habla Lorena las gafas laten con la voz ===== */
+  .figura .img{will-change:transform;transform-origin:50% 35%}
+  .hud{position:absolute;pointer-events:none;mix-blend-mode:screen;
+       -webkit-mask-image:radial-gradient(ellipse 52% 60% at 50% 52%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 52% 60% at 50% 52%,#000 55%,transparent 100%)}
+  .hud canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+  .hud .scan{position:absolute;top:0;bottom:0;width:22%;left:-25%;background:linear-gradient(90deg,transparent,rgba(120,230,255,.55),rgba(220,250,255,.9),rgba(120,230,255,.55),transparent);
+       filter:blur(2px);animation:visor 3.8s cubic-bezier(.5,0,.5,1) infinite}
+  @keyframes visor{0%{left:-25%}55%,100%{left:105%}}
+  .hud .brilloVoz{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(95,210,232,.9),rgba(95,210,232,.25) 45%,transparent 70%);opacity:0;transition:opacity .06s}
+  .figura .rim{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+       background:radial-gradient(60% 80% at 100% 30%,rgba(95,210,232,.22),transparent 60%),linear-gradient(90deg,transparent 60%,rgba(95,210,232,.10))}
+  .figura .holoScan{position:absolute;left:0;right:0;height:140px;top:-160px;pointer-events:none;mix-blend-mode:screen;
+       background:linear-gradient(to bottom,transparent,rgba(95,210,232,.16) 70%,rgba(200,245,255,.45) 97%,transparent);animation:holoScan 9s ease-in-out infinite 2s}
+  @keyframes holoScan{0%{top:-160px;opacity:1}22%{top:100%;opacity:.25}100%{top:100%;opacity:0}}
+  .figura.parpadeo .img{animation:fallo .18s steps(2) 1}
+  @keyframes fallo{50%{filter:saturate(.9) contrast(1.06) brightness(1.2) hue-rotate(-12deg);clip-path:inset(38% 0 52% 0)}}
+  .lorena{position:absolute;right:26px;bottom:92px;z-index:6;display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;
+       font-size:.66rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#bfeefc;
+       background:rgba(14,165,233,.10);border:1px solid rgba(95,210,232,.35);border-top-color:rgba(160,230,255,.6);backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(14,165,233,.25)}
+  .lorena .punto{width:7px;height:7px;border-radius:50%;background:#54e0a0;box-shadow:0 0 8px #54e0a0;animation:late2 2s ease-in-out infinite}
+  @keyframes late2{50%{opacity:.3}}
+  .ondasL{display:none;gap:2px;align-items:center;height:14px}
+  .ondasL b{display:block;width:3px;height:4px;border-radius:2px;background:var(--cyan);transition:height .06s}
+  .lorena.habla .ondasL{display:flex}
+  .lorena.habla{box-shadow:0 0 30px rgba(14,165,233,.55)}
+  .tag{display:none}
+  /* 14/11: el visor dibujado en las gafas «no se ve real, es un dibujo» -> fuera; la voz se ve solo en la etiqueta de Lorena */
+  .hud{display:none}
+
+  /* ===== 14/11 · VIDEOLLAMADA con Lorena: vídeo real (foto animada con IA, demo gratis de Hugging Face, MoDA) ===== */
+  .figura .img{background:none !important}
+  .figura .img{filter:none !important}
+  .figura .img video{position:absolute;top:11%;left:0;right:0;width:100%;height:100%;object-fit:cover;object-position:50% 0%;
+       transform:scale(1.05);transform-origin:50% 0%;
+       -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 14%);mask-image:linear-gradient(to bottom,transparent 0%,#000 14%)}
+  /* 14/11: «manos inmóviles, hombros petrificados» -> encuadre de videollamada: solo cara y arranque de hombros */
+  .figura{-webkit-mask-image:linear-gradient(to left,#000 55%,transparent 98%);mask-image:linear-gradient(to left,#000 55%,transparent 98%)}
+  .figura .holoScan{opacity:.5}
+  .llamada{position:absolute;left:50%;top:22px;transform:translate(-50%,-140%);z-index:20;display:flex;align-items:center;gap:14px;
+       padding:12px 14px 12px 12px;border-radius:999px;min-width:420px;
+       background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.04));backdrop-filter:blur(22px) saturate(160%);
+       border:1px solid rgba(255,255,255,.12);border-top-color:rgba(160,230,255,.5);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 40px rgba(14,165,233,.25);
+       transition:transform .6s cubic-bezier(.2,.9,.25,1.15)}
+  .llamada.ver{transform:translate(-50%,0)}
+  .ll-foto{width:52px;height:52px;border-radius:50%;background:url('hoy/novah-reposo.jpg') 58% 18%/260% no-repeat;
+       box-shadow:0 0 0 2px rgba(84,224,160,.8),0 0 18px rgba(84,224,160,.5);animation:anillo 1.4s ease-out infinite}
+  @keyframes anillo{0%{box-shadow:0 0 0 2px rgba(84,224,160,.9),0 0 0 0 rgba(84,224,160,.6)}100%{box-shadow:0 0 0 2px rgba(84,224,160,.9),0 0 0 16px rgba(84,224,160,0)}}
+  .ll-txt{flex:1;display:flex;flex-direction:column;line-height:1.25}
+  .ll-txt b{font-size:1.05rem;font-weight:700}
+  .ll-txt span{font-size:.78rem;color:var(--muted)}
+  .ll-no,.ll-si{width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;font-size:1.15rem;color:#fff}
+  .ll-no{background:rgba(239,90,90,.9);box-shadow:0 0 16px rgba(239,90,90,.5)}
+  .ll-si{background:#22c55e;box-shadow:0 0 18px rgba(34,197,94,.6);animation:tiembla 1.4s ease-in-out infinite}
+  @keyframes tiembla{0%,60%,100%{transform:rotate(0)}65%{transform:rotate(-14deg)}75%{transform:rotate(12deg)}85%{transform:rotate(-8deg)}}
+  .encurso{position:absolute;right:26px;bottom:140px;z-index:7;display:none;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;
+       font-size:.62rem;font-weight:700;letter-spacing:.18em;color:#ffd7d7;background:rgba(239,68,68,.16);border:1px solid rgba(239,90,90,.5);backdrop-filter:blur(8px)}
+  .encurso i{width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;animation:late2 1s ease-in-out infinite}
+  .encurso.ver{display:flex}
+
+  /* ===== DENTRO DEL LANZADOR: ocupa todo el holograma (el marco, la sombra y el encendido los pone el Lanzador) ===== */
+  html,body{background:transparent !important}
+  .holo{width:100% !important;height:100% !important;border:none !important;border-radius:0 !important;box-shadow:none !important;animation:none !important}
+  .barra .cerrar{cursor:pointer}
+
+  /* ===== MÓVIL (14-nov): una sola columna: Lorena arriba como una videollamada, la agenda debajo ===== */
+  :root{color-scheme:dark}
+  html,body{background:#05070d;color:#eaf1fb}
+  @media (max-width: 760px){
+    html,body{height:auto !important;overflow-x:hidden !important;overflow-y:auto !important}
+    body{display:block !important}
+    .holo{position:relative;width:100% !important;height:auto !important;min-height:100vh;overflow:hidden}
+    .barra{position:relative !important;height:auto;padding:12px max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px));flex-wrap:wrap;gap:10px}
+    .reloj .fecha{display:none}
+    .figura{position:relative !important;width:100% !important;height:56vh;top:auto;right:auto;bottom:auto;
+            -webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent 100%) !important;mask-image:linear-gradient(to bottom,#000 72%,transparent 100%) !important}
+    .figura .img video{object-position:50% 0%;top:4%}
+    .izq{position:relative !important;top:auto !important;width:100% !important;margin-top:-6vh;padding:0 max(16px, env(safe-area-inset-right, 0px)) 28px max(16px, env(safe-area-inset-left, 0px)) !important}
+    .cab{flex-direction:column;align-items:flex-start;gap:14px}
+    .saludo h1{font-size:1.6rem}
+    .progreso{gap:14px;flex-wrap:wrap}
+    .esfera{width:96px !important;height:96px !important}
+    .lista{overflow:visible}
+    .tarea{flex-wrap:wrap;gap:12px;padding:12px}
+    .cuerpo{flex:1 1 60%}
+    .cuerpo .d{white-space:normal}
+    .abrir{margin-left:auto}
+    .pie{flex-direction:column}
+    .difuso{width:100%;left:0}
+    .bokeh,.orbe.o1,.orbe.o2{width:100%}
+    .llamada{min-width:0;width:calc(100% - 32px);top:calc(12px + env(safe-area-inset-top, 0px))}
+    .lorena{right:16px;bottom:auto;top:calc(56vh - 44px)}
+    .encurso{right:16px;bottom:auto;top:calc(56vh - 82px)}
+    .tarde{left:16px;right:16px;width:auto}
+    .figura{z-index:5 !important}
+    /* 14-nov (su novia): el vídeo se queda FIJO arriba y solo se mueven las tareas por debajo */
+    .figura{position:sticky !important;top:0 !important;height:44vh !important}
+    /* para que «sticky» funcione, ningún contenedor de arriba puede recortar con overflow:hidden (eso lo convierte en caja de scroll) */
+    html,body{overflow:visible !important;overflow-x:clip !important}
+    .holo{overflow:clip !important}
+    .izq{margin-top:0 !important;padding-top:14px !important}
+    .lorena{position:fixed !important;top:calc(44vh - 44px) !important;z-index:8}
+    .encurso{position:fixed !important;top:calc(44vh - 82px) !important;z-index:8}
+    .llamada{position:fixed !important}
+    .difuso,.bokeh{top:44vh !important}
+    .difuso,.bokeh{top:56vh !important;height:auto !important;bottom:0}
+    .lista,.tarea,.pie,.mini{width:100%;max-width:100%;min-width:0}
+    .tarea>*{min-width:0}
+    .cuerpo{min-width:0}
+    .abrir{flex:0 0 auto;margin-left:0}
+    .llamada{z-index:30}
+    .aviso{left:50%;bottom:16px;max-width:calc(100% - 32px)}
+  }
+
+  /* 14-nov: cuando no habla, Lorena en reposo (callada, sonríe y mueve la cabeza en bucle); al contestar, se funde con el vídeo hablando */
+  .figura .img video{transition:opacity .45s ease}
+  #vLorena{opacity:0}
+  .figura.enLlamada #vLorena{opacity:1}
+  .figura.enLlamada #vReposo{opacity:0}
+  /* ===== MAQUETA: guardar marcas + apuntar ===== */
+  .guardado{font-size:.72rem;color:var(--muted);margin:2px 4px 0;min-height:1em}
+  .apunta{display:flex;align-items:center;gap:6px;margin:10px 0 4px auto;padding:7px 14px;border-radius:999px;
+    font-family:inherit;font-size:.78rem;font-weight:600;letter-spacing:.02em;color:var(--muted);cursor:pointer;
+    border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);backdrop-filter:blur(8px)}
+  .apunta:active{background:rgba(14,165,233,.15);color:var(--text)}
+  .apunta .ic{font-size:.9rem;opacity:.85}
+  .notas{display:flex;flex-direction:column;gap:8px;margin:4px 0 14px}
+  .notas h4{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin:6px 4px 2px}
+  .nota{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
+    background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.015));backdrop-filter:blur(10px)}
+  .nota .tx{flex:1;font-size:.95rem;line-height:1.35;color:var(--text);word-break:break-word}
+  .nota .cu{display:block;font-size:.7rem;color:var(--muted);margin-top:3px}
+  .nota button{border:none;background:none;color:var(--muted);font-size:1.1rem;padding:2px 4px;cursor:pointer}
+  .panelNota{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;justify-content:center;background:rgba(2,8,18,.6);backdrop-filter:blur(4px)}
+  .panelNota.ver{display:flex}
+  .panelNota{background:rgba(2,8,18,.25);backdrop-filter:none;flex-direction:column;align-items:center;justify-content:flex-end}
+  .estadoNota{max-width:520px;margin:0 12px 8px;padding:6px 14px;border-radius:999px;font-size:.85rem;font-weight:600;color:#eaf1fb;
+    background:rgba(12,26,48,.92);border:1px solid rgba(255,255,255,.18);display:none}
+  .estadoNota.ver{display:block}
+  .estadoNota.ok{background:rgba(22,163,74,.9);border-color:rgba(134,239,172,.6)}
+  .estadoNota.mal{background:rgba(185,28,28,.9);border-color:rgba(252,165,165,.6)}
+  .panelNota .caja{display:flex;align-items:center;gap:6px;width:100%;max-width:520px;margin:0 12px 14px;padding:6px 6px 6px 8px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.18);background:rgba(12,26,48,.92);backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .panelNota input{flex:1;min-width:0;border:none;outline:none;background:none;color:var(--text);font:inherit;font-size:.95rem;padding:8px 6px}
+  .panelNota input::placeholder{color:var(--dim)}
+  .panelNota .caja button{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;cursor:pointer;font-size:.95rem;
+    border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--muted)}
+  .panelNota .caja .si{background:#0ea5e9;border:none;color:#06223a;font-weight:800}
+  .panelNota .caja .no{border:none;background:none;width:26px}
+  .panelNota .micro.oye{background:#ef4444;border-color:#ef4444;color:#fff;animation:oyeLatido 1s ease-in-out infinite}
+  .panelNota .caja.oye{border-color:rgba(239,68,68,.75);box-shadow:0 0 0 3px rgba(239,68,68,.18),0 10px 30px rgba(0,0,0,.45)}
+  .panelNota .caja.oye input::placeholder{color:#fca5a5}
+  /* en el móvil la «videollamada entrante» sale ABAJO, para no tapar la cara de Lorena */
+  @media (max-width: 760px){
+    .llamada{top:auto !important;bottom:calc(16px + env(safe-area-inset-bottom, 0px));transform:translate(-50%,180%)}
+    .llamada.ver{transform:translate(-50%,0)}
+  }
+  .escuchar.bailar{margin-top:10px;background:linear-gradient(135deg,#f9a8d4,#fb923c) !important;box-shadow:0 0 24px rgba(251,146,60,.45),inset 0 1px 0 rgba(255,255,255,.5) !important}
+  .chayanne{display:block;margin-top:8px;padding:5px 12px;border-radius:999px;font:inherit;font-size:.75rem;font-weight:600;cursor:pointer;
+    color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15)}
+  /* ===== 15/11 · ESTILO «HOLOGRAMA CÁLIDO» (prueba; copia de antes en respaldo\maqueta-guardar.antes-estilo-holograma-2026-11-15.html) ===== */
+  /* 1. luz ambiente: cian tecnológico + destellos ámbar/dorados */
+  .holo::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:screen;opacity:.9;
+    background:radial-gradient(45% 38% at 82% 18%,rgba(255,190,110,.16),transparent 70%),
+               radial-gradient(40% 35% at 12% 88%,rgba(255,170,90,.10),transparent 70%),
+               radial-gradient(55% 45% at 30% 25%,rgba(80,210,255,.10),transparent 72%),
+               radial-gradient(35% 30% at 70% 85%,rgba(90,220,255,.08),transparent 70%)}
+  /* 2. tarjetas de cristal más orgánico: sombra volumétrica suave y borde superior iluminado (cian→oro) */
+  .tarea,.mini,.nota{border-radius:22px !important;border-color:rgba(255,255,255,.10) !important;border-top-color:rgba(255,222,170,.38) !important;
+    box-shadow:0 22px 44px -18px rgba(0,0,0,.65),0 8px 18px -10px rgba(0,0,0,.45),
+               inset 0 1px 0 rgba(255,230,190,.22),inset 0 0 0 1px rgba(140,220,255,.05),inset 0 -14px 26px -18px rgba(80,200,255,.18) !important}
+  .tarea::after,.mini::after,.nota::after{content:'';position:absolute;left:12%;right:12%;top:0;height:1px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,215,150,.55),rgba(140,230,255,.55),transparent);opacity:.7}
+  .mini,.nota{position:relative}
+  .escuchar{box-shadow:0 0 26px rgba(56,189,248,.45),0 0 60px rgba(255,180,100,.12),inset 0 1px 0 rgba(255,255,255,.55) !important}
+  /* 3. Lorena integrada: bordes fundidos (nada de rectángulo recortado) y halo holográfico */
+  .figura .img video{-webkit-mask-image:radial-gradient(ellipse 78% 88% at 50% 38%,#000 58%,rgba(0,0,0,.6) 76%,transparent 100%) !important;
+                             mask-image:radial-gradient(ellipse 78% 88% at 50% 38%,#000 58%,rgba(0,0,0,.6) 76%,transparent 100%) !important}
+  .figura::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:4;mix-blend-mode:screen;
+    background:radial-gradient(ellipse 60% 70% at 50% 40%,transparent 55%,rgba(90,215,255,.10) 75%,rgba(255,190,120,.08) 88%,transparent 100%)}
+  @media (max-width:760px){
+    .figura{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent 100%);mask-image:linear-gradient(to bottom,#000 72%,transparent 100%)}
+  }
+  
+  :root{ --cyan:#f2c48a; --blue:#d9904f; --oro:#f0c27a; --glow:rgba(242,176,104,.50);
+         --glass-brd:rgba(240,200,150,.32); --text:#fbf3ea; --muted:#d2bfa8; --dim:#8c7a66 }
+  body{background:#070403}
+  .holo{background:radial-gradient(900px 640px at 72% 30%,#3a2416 0%,#1c120b 45%,#0a0604 100%) !important;
+        border-color:rgba(240,200,150,.35) !important;
+        box-shadow:0 0 0 1px rgba(242,176,104,.12),0 0 30px rgba(242,176,104,.25),inset 0 0 80px rgba(242,176,104,.06) !important}
+  .holo::before{opacity:.55 !important;
+        background:radial-gradient(520px 420px at 80% 28%,rgba(255,170,90,.35) 0%,transparent 62%),
+                   radial-gradient(420px 420px at 6% 92%,rgba(255,140,70,.22) 0%,transparent 62%),
+                   radial-gradient(380px 300px at 40% 10%,rgba(90,150,170,.10) 0%,transparent 70%) !important}
+  .holo::after{background:radial-gradient(45% 38% at 82% 18%,rgba(255,190,110,.18),transparent 70%),
+               radial-gradient(40% 35% at 12% 88%,rgba(255,150,80,.12),transparent 70%),
+               radial-gradient(55% 45% at 30% 25%,rgba(255,215,160,.06),transparent 72%) !important}
+  .difuso{background:radial-gradient(40% 35% at 25% 30%,rgba(255,180,110,.40),transparent 70%),
+                     radial-gradient(45% 40% at 60% 70%,rgba(255,130,70,.30),transparent 70%),
+                     radial-gradient(35% 30% at 80% 20%,rgba(120,170,190,.18),transparent 70%) !important}
+  .luces{background:radial-gradient(260px 200px at 18% 42%,rgba(255,190,110,.12),transparent 70%),
+                    radial-gradient(300px 220px at 62% 70%,rgba(255,150,80,.14),transparent 70%) !important}
+  .niebla{background:linear-gradient(to bottom,rgba(14,8,5,.85) 0%,rgba(14,8,5,.35) 30%,rgba(14,8,5,.15) 60%,rgba(14,8,5,.55) 100%) !important}
+  .bokeh i{background:radial-gradient(circle,rgba(255,215,160,.55),rgba(255,170,90,.15) 45%,transparent 70%) !important}
+  /* tarjetas de cristal cálido */
+  .tarea,.mini,.nota{background:radial-gradient(260px 120px at var(--mx,30%) var(--my,0%),rgba(255,215,170,.10),transparent 70%),
+                                linear-gradient(135deg,rgba(255,225,190,.08) 0%,rgba(255,200,150,.02) 100%) !important;
+    border-color:rgba(255,220,180,.12) !important;border-top-color:rgba(255,215,160,.40) !important}
+  .tarea::after,.mini::after,.nota::after{background:linear-gradient(90deg,transparent,rgba(255,215,150,.65),rgba(255,180,110,.45),transparent) !important}
+  /* botones crema / melocotón */
+  .escuchar{background:linear-gradient(135deg,#f7e2c0,#e9b67e) !important;color:#2b1709 !important;
+    box-shadow:0 0 22px rgba(242,176,104,.40),inset 0 1px 0 rgba(255,255,255,.6) !important}
+  .escuchar.bailar{background:linear-gradient(135deg,#f6c4a6,#e8956a) !important}
+  .pest.on,.marca .ini{background:linear-gradient(135deg,#f7d9ab,#e0a066) !important;color:#2b1709 !important}
+  .apunta{color:var(--muted)}
+  /* la bola de circuitos, dorada */
+  #bola{filter:sepia(1) saturate(2.4) hue-rotate(-12deg) brightness(1.08)}
+  .esfera{box-shadow:0 0 28px rgba(242,176,104,.45),0 0 70px rgba(242,150,80,.18) !important;border-color:rgba(255,215,160,.35) !important}
+  .hora{text-shadow:0 0 18px rgba(242,176,104,.40) !important}
+  /* Lorena con luz cálida, como en una habitación con lámparas */
+  .figura .img video{filter:saturate(1.02) sepia(.12) brightness(1.02)}
+  .figura::after{background:radial-gradient(ellipse 60% 70% at 50% 40%,transparent 55%,rgba(255,190,120,.10) 80%,transparent 100%) !important}
+  /* 15/11 · DETRÁS DEL CRISTAL: el estudio de noche con la ciudad en movimiento (vídeo en bucle, desenfocado y en penumbra) */
+  .fondoCiudad{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;
+    filter:blur(2.5px) brightness(.55) saturate(1.15) sepia(.12);opacity:.95;transform:scale(1.04)}
+  @media (max-width:760px){ .fondoCiudad{position:fixed;object-position:58% 50%} }
+  /* 15/11 · notas apuntadas: recogidas en una línea; desplegadas, filas finas */
+  .notas{gap:6px !important;margin:2px 0 10px !important}
+  .notasCab{align-self:flex-start;display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;cursor:pointer;
+    font:inherit;font-size:.74rem;font-weight:600;letter-spacing:.04em;color:var(--muted);
+    background:rgba(255,225,190,.06);border:1px solid rgba(255,215,160,.22)}
+  .notasCab span{opacity:.7}
+  .nota.fina{align-items:center !important;gap:10px !important;padding:7px 12px !important;border-radius:14px !important}
+  .nota.fina .tx{flex:1;min-width:0;font-size:.84rem !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nota.fina .cu{flex:none;font-size:.66rem;color:var(--dim);margin:0}
+  .nota.fina .borrar{font-size:.85rem;padding:0 2px}
+  /* 15/11 · lo apuntado, en una HOJITA DE CUADERNO limpia (papel con rayas, margen rojo, letra a mano) sobre el cristal */
+  .hojita{position:relative;padding:10px 14px 12px 46px;border-radius:4px 10px 10px 4px;transform:rotate(-.5deg);
+    background-color:#fbf6ec;
+    background-image:linear-gradient(90deg,transparent 32px,rgba(205,80,70,.45) 32px,rgba(205,80,70,.45) 33.5px,transparent 33.5px),
+                     repeating-linear-gradient(180deg,transparent 0 31px,rgba(70,110,170,.20) 31px 32px);
+    background-position:0 0,0 6px;
+    box-shadow:0 18px 36px -14px rgba(0,0,0,.6),0 4px 10px rgba(0,0,0,.25)}
+  .hojita .nota.fina{background:none !important;border:none !important;box-shadow:none !important;border-radius:0 !important;
+    padding:0 !important;min-height:32px;gap:8px !important}
+  .hojita .nota.fina::after{display:none !important}
+  .hojita .nota.fina .tx{font-family:'Caveat','Segoe Print',cursive !important;font-size:1.3rem !important;line-height:32px;color:#23324f !important}
+  .hojita .nota.fina .cu{color:#7d879c !important;font-size:.62rem}
+  .hojita .nota.fina .borrar{color:#9a7d6a !important}
+  /* pantalla negra al abrir: doble toque y ella aparece poco a poco */
+  .telon{position:fixed;inset:0;z-index:100;background:#000;display:flex;align-items:flex-end;justify-content:center;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .telon span{margin-bottom:calc(48px + env(safe-area-inset-bottom,0px));font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;
+    color:rgba(255,255,255,.28);animation:telonLatido 3.2s ease-in-out infinite}
+  .telon.fuera{pointer-events:none}
+  .telon.fuera span{animation:none;opacity:0;transition:opacity .4s}
+  @keyframes telonLatido{0%,100%{opacity:.25}50%{opacity:.7}}
+  /* fila «Los vídeos de Lorena» */
+  .galeria{margin:6px 0 14px}
+  .galeria h4{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin:6px 4px 8px}
+  .galeria .fila{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .galeria .fila::-webkit-scrollbar{display:none}
+  .galeria button{flex:none;width:92px;padding:0;border:none;background:none;cursor:pointer;scroll-snap-align:start;color:var(--muted);font:inherit}
+  .galeria img{display:block;width:92px;height:92px;object-fit:cover;border-radius:18px;border:1px solid rgba(255,255,255,.18);
+    box-shadow:0 6px 18px rgba(0,0,0,.35);transition:transform .2s}
+  .galeria button:active img{transform:scale(.94)}
+  .galeria span{display:block;margin-top:6px;font-size:.72rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @keyframes oyeLatido{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+
+  
+  .izq{width:max(44%,560px)}
+  .cajaN{flex:none;width:20px !important;height:20px !important;padding:0 !important;border-radius:4px 6px 4px 5px !important;border:2px solid #23324f !important;background:rgba(255,255,255,.5) !important;cursor:pointer;position:relative;opacity:.85}
+  .nota.fina.hecha .cajaN::after{content:'✓';position:absolute;left:0;top:-13px;font-family:'Caveat',cursive;font-size:1.7rem;font-weight:700;color:#2d7d4f}
+  .hojita .nota.fina.hecha .tx{color:#8a93a6 !important;text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:rgba(35,50,79,.5)}
+  /* 15/11: el aviso de «videollamada» (quitado el 14/11) no puede asomar nunca por abajo en el móvil */
+  .llamada:not(.ver){display:none !important}
+  /* 15/11: en la hojita la nota se lee ENTERA (salta de renglón), nunca cortada con «…» */
+  .hojita .nota.fina{align-items:flex-start !important}
+  .hojita .nota.fina .tx{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;overflow-wrap:anywhere}
+  .hojita .nota.fina .cajaN{margin-top:6px}
+  .hojita .nota.fina .cu,.hojita .nota.fina .borrar{line-height:32px}
+  @media (max-width: 760px){ .hojita .nota.fina .cu{display:none} }
+  
+  .hojita{background:none !important;box-shadow:none !important;padding:0 !important;transform:none !important;border-radius:0 !important;
+    display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .hojita .nota.fina{background-color:#fbf6ec !important;
+    background-image:linear-gradient(90deg,transparent 32px,rgba(205,80,70,.45) 32px,rgba(205,80,70,.45) 33.5px,transparent 33.5px),
+                     repeating-linear-gradient(180deg,transparent 0 31px,rgba(70,110,170,.20) 31px 32px) !important;
+    padding:0 10px 0 42px !important;border-radius:3px 9px 9px 3px !important;transform:rotate(-.4deg);
+    box-shadow:0 10px 22px -10px rgba(0,0,0,.65),0 2px 6px rgba(0,0,0,.25) !important}
+  .hojita .nota.fina:nth-of-type(even){transform:rotate(.35deg)}
+  .grupoNota{font-family:'Caveat',cursive;font-weight:700;font-size:1.4rem;line-height:30px;color:#f3dcc0;text-shadow:0 1px 8px rgba(0,0,0,.6);margin:4px 0 -2px 4px}
+  .accL{position:absolute;right:26px;bottom:40px;z-index:7;display:flex;gap:10px}
+  .accL .escuchar{margin:0 !important;padding:7px 14px;font-size:.76rem;font-weight:600;border-radius:999px;
+    background:rgba(255,235,210,.05) !important;color:#f3dcc0 !important;border:1px solid rgba(255,220,180,.26) !important;
+    box-shadow:none !important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .accL .escuchar:hover{background:rgba(255,235,210,.14) !important;color:#fff4e6 !important}
+  .accL .escuchar.hablando{border-color:rgba(255,215,160,.6) !important}
+  @media (max-width: 760px){
+    .izq{width:100% !important}
+    .accL{position:fixed;right:auto;left:16px;bottom:auto;top:calc(44vh - 44px);z-index:8;gap:6px}
+    .accL{gap:5px}
+    .accL .escuchar{padding:5px 8px;font-size:.66rem;gap:4px}
+  }
+
+  /* ===== 15/11 · las 4 mejoras en que coincidieron Gemini y Claude ===== */
+  /* 3) contraste: velo oscuro suave detrás de las tareas (las luces de la ciudad ya no se comen el texto) */
+  .izq{background:linear-gradient(90deg,rgba(10,6,3,.62) 0%,rgba(10,6,3,.42) 72%,transparent 100%)}
+  /*    barra de desplazamiento fina y discreta */
+  .lista{scrollbar-width:thin;scrollbar-color:rgba(255,220,180,.22) transparent}
+  .lista::-webkit-scrollbar{width:5px}
+  .lista::-webkit-scrollbar-track{background:transparent}
+  .lista::-webkit-scrollbar-thumb{background:rgba(255,220,180,.22);border-radius:9px}
+  /* 4) papelitos en crema cálido, no blanco */
+  .hojita .nota.fina{background-color:#efe3cb !important}
+  @media (max-width: 760px){
+    .izq{background:linear-gradient(180deg,transparent 0,rgba(10,6,3,.38) 140px,rgba(10,6,3,.38) 100%)}
+    /* 1) «Apúntame algo» fijo abajo, a mano del pulgar */
+    .apunta{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);margin:0 !important;z-index:20;
+      padding:11px 22px;font-size:.92rem;color:#f6e3c8 !important;background:rgba(24,14,7,.62);border-color:rgba(255,220,180,.38);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 26px rgba(0,0,0,.5)}
+    .izq{padding-bottom:96px !important}
+    .aviso{bottom:calc(76px + env(safe-area-inset-bottom,0px)) !important}
+  }
+
+  
+  .filaArriba{display:none}
+  @media (max-width: 760px){
+    .barra .reloj{display:none !important}
+    .filaArriba{display:flex;width:100%;align-items:center;justify-content:space-between;gap:6px}
+    .filaArriba .accL{position:static !important;top:auto !important;left:auto !important;display:flex;gap:5px}
+    .filaArriba .lorena{position:static !important;top:auto !important;right:auto !important;bottom:auto !important;
+      padding:5px 10px;font-size:.58rem;letter-spacing:.14em;gap:6px}
+  }
+
+  @media (max-width: 760px){
+    .barra{position:sticky !important;top:0 !important;z-index:40 !important;background:linear-gradient(180deg,#1a110a,#140d08) !important;
+      box-shadow:0 6px 18px rgba(0,0,0,.45)}
+    .figura{top:var(--barraH,0px) !important}
+  }
+
+  /* 15/11 · botón de la música de fondo */
+  .musicaBtn{margin-left:12px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,220,180,.3);background:rgba(255,235,210,.06);
+    color:#f3dcc0;font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+  .musicaBtn.apagada{opacity:.4;filter:grayscale(1)}
+
+  /* 15/11 · recuadro de YouTube */
+  .musicaBtn{margin-left:8px}
+  .musicaBtn.on{background:rgba(255,200,140,.25);border-color:rgba(255,215,160,.6)}
+  .ytCaja{position:fixed;left:22px;bottom:22px;z-index:45;width:280px;border-radius:14px;overflow:hidden;display:none;
+    background:#120b06;border:1px solid rgba(255,220,180,.3);box-shadow:0 14px 34px rgba(0,0,0,.6)}
+  .ytCaja.ver{display:block}
+  .ytCaja iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
+  .ytBarra{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 4px 10px}
+  .ytTit{color:#f3dcc0;font-size:.72rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ytBarra button{background:none;border:0;color:#f3dcc0;font:inherit;font-size:.72rem;cursor:pointer;padding:3px 6px}
+  .ytPedir{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(5,3,2,.55);padding:16px}
+  .ytPedir.ver{display:flex}
+  .ytHoja{width:min(420px,100%);background:#1b120b;border:1px solid rgba(255,220,180,.3);border-radius:16px;padding:18px;color:#f6e3c8;display:flex;flex-direction:column;gap:10px}
+  .ytHoja small{color:#bfa98e;font-size:.8rem}
+  .ytHoja input{font:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,220,180,.3);background:#0f0905;color:#fff}
+  .ytBot{display:flex;justify-content:flex-end;gap:8px}
+  .ytBot button{font:inherit;font-weight:700;border-radius:999px;padding:8px 16px;cursor:pointer;border:1px solid rgba(255,220,180,.3);background:none;color:#f3dcc0}
+  .ytBot .si{background:linear-gradient(135deg,#f7e2c0,#e9b67e);color:#2b1709;border:0}
+  @media (max-width: 760px){ .ytCaja{left:auto;right:12px;bottom:calc(70px + env(safe-area-inset-bottom,0px));width:190px} }
+</style>
+
+<button id="dTarde" hidden></button>
+
+<svg width="0" height="0" style="position:absolute">
+  <filter id="lente" x="0" y="0" width="100%" height="100%" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+    <feImage id="mapaLente" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="mapa"/>
+    <feDisplacementMap in="SourceGraphic" in2="mapa" scale="0.05" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+<div class="holo" id="holo">
+  <video class="fondoCiudad" src="hoy/fondo-ciudad.mp4?v=1" autoplay muted loop playsinline aria-hidden="true"></video>
+  <div class="barra">
+    <div style="display:flex;align-items:center">
+      <div class="marca"><span class="ini">N</span>NOVAH DJ</div><button class="musicaBtn" id="musica" type="button" aria-label="Música de fondo">🎵</button>
+    </div>
+    <div class="reloj"><div class="fecha" id="fecha"></div><div class="hora" id="hora"></div><div class="cerrar">✕</div></div>
+  </div>
+
+  <div class="figura"><div class="img" id="mujer"><video id="vReposo" src="hoy/novah-s-reposo.mp4?v=1" autoplay muted loop playsinline></video><video id="vLorena" src="hoy/novah-habla.mp4?v=g2" poster="hoy/novah-reposo.jpg" playsinline preload="auto"></video><div class="hud" id="hud"><canvas id="hudTxt"></canvas><i class="scan"></i><i class="brilloVoz" id="brilloVoz"></i></div></div><i class="rim"></i><i class="holoScan"></i></div>
+  <div class="lorena" id="lorena"><i class="punto"></i><span>NOVAH</span><span class="ondasL"><b></b><b></b><b></b><b></b><b></b></span></div>
+  <div class="accL"><button class="escuchar" id="escuchar">🔊 Escuchar el día</button><button class="escuchar bailar" id="bailar">🎧 ¿Pinchamos?</button></div>
+
+  <div class="difuso"></div><div class="bokeh" id="bokeh"></div>
+  <div class="orbe o1"></div><div class="orbe o2"></div><div class="orbe o3"></div>
+  <div class="izq">
+    <div class="cab">
+      <div class="saludo">
+        <h1 id="saludo">Buenos días, David Pando</h1>
+        <div class="sub" id="resumen"></div>
+      </div>
+      <div class="progreso">
+        <div class="esfera-caja">
+          <div class="esfera" id="esfera"><canvas id="bola" width="300" height="300"></canvas><i class="reflejo"></i><i class="reflejo r2"></i></div>
+          <div class="cuenta"><span id="nHechas">0</span> de <span id="nTotal">0</span><small>hechas</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lista" id="lista"></div>
+    <div class="guardado" id="guardado"></div>
+    <button class="apunta" id="apunta"><span class="ic">🎤</span> Apúntame algo</button>
+    <div class="notas" id="notas"></div>
+
+    <div class="pie">
+      <div class="mini"><h4>Lunes 23</h4>Reunión con proveedor a las 9:00 (ejemplo)</div>
+      <div class="mini"><h4>Esperando a otros</h4>Respuesta de un cliente al presupuesto (ejemplo)</div>
+    </div>
+  </div>
+
+  <div class="tarde" id="tarde">
+    <h3>Se acaba el día, David</h3>
+    <p id="tardeTxt"></p>
+    <div class="bot"><button id="tPasar">Pasar a mañana</button><button id="tCerrar">Ya lo veo</button></div>
+  </div>
+  <div class="llamada" id="llamada">
+    <div class="ll-foto"></div>
+    <div class="ll-txt"><b>NOVAH</b><span>Videollamada entrante…</span></div>
+    <button class="ll-no" id="llNo" title="Ahora no">✕</button>
+    <button class="ll-si" id="llSi" title="Contestar">📞</button>
+  </div>
+  <div class="encurso" id="encurso"><i></i>EN LLAMADA · <span id="crono">00:00</span></div>
+  <div class="aviso" id="aviso"></div>
+</div>
+<div class="panelNota" id="panelNota">
+  <div class="estadoNota" id="estadoNota"></div>
+  <div class="caja">
+    <button class="micro" id="micro" hidden title="Hablar">🎤</button>
+    <input id="txtNota" type="text" maxlength="500" placeholder="Apúntame…" enterkeyhint="done">
+    <button class="si" id="siNota" title="Guardar">✓</button>
+    <button class="no" id="noNota" title="Cerrar">✕</button>
+  </div>
+</div>
+<div class="telon" id="telon"><span>toca dos veces</span></div>
+
+
+<script>
+  // Tareas de EJEMPLO para la maqueta de NOVAH (David Pando): se cambiarán por las de su calendario.
+  const TAREAS = [{"t": "Reunión con un cliente en obra", "d": "10:00 · De tu calendario (ejemplo)", "etq": "Reunión", "urgente": true, "hecha": false}, {"t": "Llamar al proveedor de iluminación", "d": "Pendiente de tu lista (ejemplo)", "etq": "Llamada", "urgente": false, "hecha": false}, {"t": "Comida con un interiorista", "d": "13:30 · De tu calendario (ejemplo)", "etq": "Comida", "urgente": false, "hecha": false}, {"t": "Revisar el catálogo de House Collection", "d": "Pendiente de tu lista (ejemplo)", "etq": "House", "urgente": false, "hecha": false}, {"t": "Pasar por el showroom", "d": "18:00 · De tu calendario (ejemplo)", "etq": "Showroom", "urgente": false, "hecha": false}];
+  const FECHA = '2026-11-20';
+  const $ = s => document.querySelector(s);
+  const CHECK = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#06223a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+  function pintar(){
+    // 15/11 (Gemini + Claude): las hechas bajan al final; las pendientes arriba, en su orden
+    const orden = TAREAS.map((x,i)=>[x,i]).sort((a,b)=>(!!a[0].hecha-!!b[0].hecha)||(a[1]-b[1]));
+    $('#lista').innerHTML = orden.map(([x,i])=>`
+      <div class="tarea ${x.hecha?'hecha':''} ${x.urgente&&!x.hecha?'urgente':''}" data-i="${i}">
+        <div class="casilla" title="Marcar como hecha">${CHECK}</div>
+        <div class="cuerpo"><div class="t">${x.t}${x.etq?'<span class="etq '+(x.oro?'oro':'')+'">'+x.etq+'</span>':''}</div>
+          <div class="d">${x.hora?'🕑 '+x.hora+' · ':''}${x.d||''}</div></div>
+      </div>`).join('');
+    const h = TAREAS.filter(x=>x.hecha).length, n = TAREAS.length;
+    $('#nHechas').textContent = h; $('#nTotal').textContent = n;
+    Bola.luz(n? h/n : 0);
+    const faltan = n-h;
+    $('#resumen').textContent = faltan ? `Hoy tienes ${n} cosas. Te faltan ${faltan}.` : '¡Todo hecho por hoy! 🎉';
+    $('#tardeTxt').textContent = faltan ? `Te ${faltan===1?'falta':'faltan'} ${faltan}: ` + TAREAS.filter(x=>!x.hecha).map(x=>x.t).join(' · ') : 'Hoy lo has hecho todo. ¡Buen trabajo!';
+  }
+  $('#lista').addEventListener('click', e=>{
+    const fila = e.target.closest('.tarea'); if(!fila) return; const x = TAREAS[+fila.dataset.i];
+    if(e.target.closest('.casilla')){ x.hecha = !x.hecha; pintar(); Guardar.marcas();
+      if(x.hecha && TAREAS.every(y=>y.hecha) && window.LorenaReacciona) window.LorenaReacciona('risa'); }
+    else if(e.target.closest('.abrir')) aviso('Se abre en el portátil: ' + x.donde);
+  });
+  function aviso(t){ const a=$('#aviso'); a.textContent=t; a.classList.add('ver'); clearTimeout(a._t); a._t=setTimeout(()=>a.classList.remove('ver'),3200); }
+
+  // Voz: en la maqueta usa la voz del navegador (en la app, la voz Helena del ordenador, como LEER.bat)
+  // en la app, lanzador.py la generará cada vez con el texto del día (edge-tts, como Vitito).
+  const vozLorena = new Audio('hoy/dia.mp3');
+  // «Escuchar el día» = saludo en vídeo de Lorena y, al acabar, Serena leyendo el día. Pulsar otra vez = parar.
+  // 14/11: UNA sola cosa sonando a la vez. «Escuchar el día» = leer / ⏸ pausar / ▶ seguir; si baila con música, ella para.
+  const TXT_ESCUCHAR='🔊 Escuchar el día';
+  function botonVoz(t){ const b=$('#escuchar'); b.textContent=t; b.classList.toggle('hablando', t.startsWith('⏸')); }
+  // 15/11: delante de la lectura, el saludo según la HORA REAL al pulsar (misma voz, grabado una vez)
+  const SALUDOS={m:new Audio('hoy/saludo-manana.mp3?v=1'), t:new Audio('hoy/saludo-tarde.mp3?v=1'), n:new Audio('hoy/saludo-noche.mp3?v=1')};
+  const saludoAhora=()=>{ const h=new Date().getHours(); return h>=6&&h<14?SALUDOS.m:(h>=14&&h<20?SALUDOS.t:SALUDOS.n); };
+  let enSaludo=null;
+  function tocarDia(){   // la lectura en sí (después del saludo)
+    vozLorena.onended=()=>{ vozLorena.currentTime=0; botonVoz(TXT_ESCUCHAR); Lorena.calla(); };
+    botonVoz('⏸ Pausar'); vozLorena.play().catch(()=>botonVoz(TXT_ESCUCHAR)); Lorena.habla(); }
+  function leerDia(){
+    if(enSaludo){ botonVoz('⏸ Pausar'); Lorena.habla(); enSaludo.play().catch(()=>{ enSaludo=null; tocarDia(); }); return; }   // seguir el saludo pausado
+    if(vozLorena.currentTime===0){   // empieza de cero → primero el saludo de la hora real
+      enSaludo=saludoAhora(); enSaludo.currentTime=0;
+      enSaludo.onended=()=>{ enSaludo=null; tocarDia(); };
+      botonVoz('⏸ Pausar'); Lorena.habla(); enSaludo.play().catch(()=>{ enSaludo=null; tocarDia(); }); return; }
+    tocarDia(); }   // seguir la lectura pausada
+  const sonandoDia=()=>!vozLorena.paused || (enSaludo && !enSaludo.paused);
+  window.pararVozDia=()=>{ if(enSaludo){ enSaludo.pause(); enSaludo.currentTime=0; enSaludo=null; }
+    if(vozLorena.paused && vozLorena.currentTime===0){ botonVoz(TXT_ESCUCHAR); return; } vozLorena.pause(); vozLorena.currentTime=0; botonVoz(TXT_ESCUCHAR); Lorena.calla(); };
+  function callarVideos(){ // si un vídeo suena (bachata, «¡Hola!»), vuelve a la sonrisa callada
+    const v=[...document.querySelectorAll('.figura video')].find(x=>x.style.opacity==='1' && !x.muted && !x.paused && x.id!=='vLorena');
+    if(v){ if(window.LorenaReacciona) window.LorenaReacciona('s-reposo'); else v.muted=true; } }
+  $('#escuchar').onclick = ()=>{
+    if(sonandoDia()){ vozLorena.pause(); if(enSaludo) enSaludo.pause(); Lorena.calla(); botonVoz('▶ Seguir'); return; }   // pausa: sigue luego desde ahí
+    callarVideos(); document.getElementById('llamada').classList.remove('ver');
+    leerDia();   // sin el saludo en vídeo (otra voz): una sola voz, Serena
+  };
+  // nivel de la voz: se mide del audio de verdad; si el navegador no deja medirlo (abierto como fichero), se imita con su ritmo
+  const Lorena=(function(){
+    let an=null, datos=null, vivo=false, t0=0; const brillo=document.getElementById('brilloVoz'), et=document.getElementById('lorena'), barras=[...et.querySelectorAll('.ondasL b')];
+    function prepara(){ if(an || location.protocol==='file:') return; try{ /* abierto como fichero, medir el audio lo dejaría MUDO: se imita */ const ac=new (window.AudioContext||window.webkitAudioContext)(); const src=ac.createMediaElementSource(vozLorena); an=ac.createAnalyser(); an.fftSize=512; src.connect(an); an.connect(ac.destination); datos=new Uint8Array(an.fftSize); ac.resume(); }catch(e){ an=null; } }
+    function nivel(t){ let n=0; if(an){ an.getByteTimeDomainData(datos); for(const v of datos) n=Math.max(n,Math.abs(v-128)); n/=128; }
+      if(n<.01){ const s=(t-t0)/1000; n=Math.max(0,.35+.3*Math.sin(s*17)+.25*Math.sin(s*7.3+1)+.2*Math.sin(s*31))*(Math.sin(s*2.1)>-.6?1:.15); } return Math.min(1,n*1.6); }
+    function bucle(t){ if(!vivo) return; const n=nivel(t); brillo.style.opacity=(.15+n*.85).toFixed(2); barras.forEach((b,i)=>b.style.height=(4+n*10*(.6+.4*Math.sin(t/90+i)))+'px'); requestAnimationFrame(bucle); }
+    return { habla(){ prepara(); vivo=true; t0=performance.now(); et.classList.add('habla'); requestAnimationFrame(bucle); },
+             calla(){ vivo=false; brillo.style.opacity=0; et.classList.remove('habla'); barras.forEach(b=>b.style.height='4px'); } };
+  })();
+  $('#dTarde').onclick = ()=>$('#tarde').classList.add('ver');
+  $('#tCerrar').onclick = ()=>$('#tarde').classList.remove('ver');
+  $('#tPasar').onclick = ()=>{ $('#tarde').classList.remove('ver'); aviso('Lo que falta pasaría a la lista de mañana.'); };
+
+  function reloj(){
+    const d=new Date(); const h=d.getHours();
+    $('#hora').textContent = d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    $('#fecha').innerHTML = d.toLocaleDateString('es-ES',{weekday:'long'}) + '<br>' + d.toLocaleDateString('es-ES',{day:'numeric',month:'long'});
+    $('#saludo').textContent = (h>=6&&h<14?'Buenos días':h>=14&&h<20?'Buenas tardes':'Buenas noches') + ', David Pando';
+  }
+
+  // MAPA DE LA LENTE: cerca de los bordes el fondo se ve empujado hacia dentro (como el canto grueso de una esfera de cristal)
+  (function(){
+    const W=800,H=90,R=22,c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'), im=g.createImageData(W,H);
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+      // distancia al borde del rectángulo redondeado
+      const qx=Math.abs(x-W/2)-(W/2-R), qy=Math.abs(y-H/2)-(H/2-R);
+      const fuera=Math.hypot(Math.max(qx,0),Math.max(qy,0))+Math.min(Math.max(qx,qy),0)-R; // <0 dentro
+      const d=Math.max(0,-fuera), banda=26, k=d<banda?Math.pow(1-d/banda,2.2):0;
+      // dirección hacia el centro
+      let vx=(W/2-x), vy=(H/2-y)*(W/H)*.35; const n=Math.hypot(vx,vy)||1; vx/=n; vy/=n;
+      const i=(y*W+x)*4; im.data[i]=128+vx*127*k; im.data[i+1]=128+vy*127*k; im.data[i+2]=128; im.data[i+3]=255;
+    }
+    g.putImageData(im,0,0); document.getElementById('mapaLente').setAttribute('href',c.toDataURL());
+  })();
+  // LA BOLA: circuitos pintados en plano y proyectados en una esfera que gira despacio (como la imagen de referencia)
+  const Bola=(function(){
+    const SW=600,SH=300, fuente=document.createElement('canvas'); fuente.width=SW; fuente.height=SH; const fg=fuente.getContext('2d');
+    const cv=document.getElementById('bola'), g=cv.getContext('2d'), S=cv.width, C=S/2, R=S/2-1;
+    let sem=314159; const rnd=()=>{sem=(sem*16807)%2147483647; return sem/2147483647;};
+    const vec=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
+    const pistas=[]; for(let k=0;k<230;k++){ let x=rnd()*SW, y=40+rnd()*(SH-80); const pts=[[x,y]]; let d=Math.floor(rnd()*4)*2;
+      for(let p=0;p<3+Math.floor(rnd()*6);p++){ const L=8+rnd()*38; x+=vec[d][0]*L; y+=vec[d][1]*L; pts.push([x,y]); d=(d+(rnd()<.5?1:7))%8; }
+      pistas.push({pts,w:rnd()<.25?2.6:1.4,orden:rnd()}); }
+    const nodos=[]; for(let k=0;k<120;k++) nodos.push({x:rnd()*SW,y:20+rnd()*(SH-40),r:1+rnd()*2.4,orden:rnd()});
+    const chips=[]; for(let k=0;k<14;k++) chips.push({x:rnd()*SW,y:40+rnd()*(SH-90),w:14+rnd()*22,h:10+rnd()*16,orden:rnd()});
+    let luz=0, giro=0;
+    function pintarFuente(){
+      const fondo=fg.createLinearGradient(0,0,0,SH); fondo.addColorStop(0,'#05182b'); fondo.addColorStop(.5,'#0a2c48'); fondo.addColorStop(1,'#041222');
+      fg.fillStyle=fondo; fg.fillRect(0,0,SW,SH);
+      for(const dx of [0,-SW,SW]) for(const p of pistas){ const on=p.orden<luz;
+        fg.beginPath(); fg.moveTo(p.pts[0][0]+dx,p.pts[0][1]); for(const q of p.pts.slice(1)) fg.lineTo(q[0]+dx,q[1]);
+        fg.lineCap='round'; fg.lineJoin='round'; fg.lineWidth=p.w;
+        if(on){ fg.shadowColor='rgba(95,210,232,1)'; fg.shadowBlur=9; fg.strokeStyle='rgba(150,235,255,.95)'; }
+        else { fg.shadowColor='rgba(95,210,232,.5)'; fg.shadowBlur=3; fg.strokeStyle='rgba(95,190,230,.38)'; }
+        fg.stroke();
+        const e=p.pts[p.pts.length-1]; fg.fillStyle=on?'rgba(220,250,255,1)':'rgba(110,190,225,.45)'; fg.beginPath(); fg.arc(e[0]+dx,e[1],p.w+1.2,0,7); fg.fill(); }
+      fg.shadowBlur=0;
+      for(const dx of [0,-SW,SW]) for(const ch of chips){ fg.fillStyle='rgba(3,10,20,.9)'; fg.strokeStyle=ch.orden<luz?'rgba(150,235,255,.9)':'rgba(95,190,230,.35)'; fg.lineWidth=1; fg.fillRect(ch.x+dx,ch.y,ch.w,ch.h); fg.strokeRect(ch.x+dx,ch.y,ch.w,ch.h);
+        for(let k=3;k<ch.w-2;k+=4){ fg.fillStyle=fg.strokeStyle; fg.fillRect(ch.x+dx+k,ch.y-3,1.4,3); fg.fillRect(ch.x+dx+k,ch.y+ch.h,1.4,3); } }
+      for(const dx of [0,-SW,SW]) for(const nd of nodos){ const on=nd.orden<luz; if(!on) continue;
+        const gr=fg.createRadialGradient(nd.x+dx,nd.y,0,nd.x+dx,nd.y,nd.r*5); gr.addColorStop(0,'rgba(220,250,255,.95)'); gr.addColorStop(1,'rgba(95,210,232,0)');
+        fg.fillStyle=gr; fg.beginPath(); fg.arc(nd.x+dx,nd.y,nd.r*5,0,7); fg.fill(); }
+    }
+    const base=document.createElement('canvas'); base.width=SW; base.height=SH; const bg=base.getContext('2d');
+    // chispas: puntos de luz que viajan por las pistas encendidas
+    const chispas=[]; for(let k=0;k<40;k++) chispas.push({p:Math.floor(rnd()*230), t:rnd(), v:.004+rnd()*.012});
+    function puntoEn(pts,t){ let tot=0; const L=[]; for(let i=1;i<pts.length;i++){ const l=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); L.push(l); tot+=l; }
+      let d=t*tot; for(let i=1;i<pts.length;i++){ if(d<=L[i-1]){ const f=d/L[i-1]; return [pts[i-1][0]+(pts[i][0]-pts[i-1][0])*f, pts[i-1][1]+(pts[i][1]-pts[i-1][1])*f]; } d-=L[i-1]; } return pts[pts.length-1]; }
+    function fotograma(){
+      fg.drawImage(base,0,0);
+      for(const c of chispas){ const pi=pistas[c.p%pistas.length]; if(!(pi.orden<luz)) continue; c.t+=c.v; if(c.t>1) c.t=0;
+        const [x,y]=puntoEn(pi.pts,c.t); for(const dx of [0,-SW,SW]){ const gr=fg.createRadialGradient(x+dx,y,0,x+dx,y,7); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(.35,'rgba(160,240,255,.8)'); gr.addColorStop(1,'rgba(95,210,232,0)');
+          fg.fillStyle=gr; fg.beginPath(); fg.arc(x+dx,y,7,0,7); fg.fill(); } }
+      src=fg.getImageData(0,0,SW,SH).data;
+    }
+    let src=null;
+    function proyectar(){
+      if(!src) src=fg.getImageData(0,0,SW,SH).data;
+      const out=g.createImageData(S,S), o=out.data, off=Math.floor(giro);
+      for(let y=0;y<S;y++){ const ny=(y-C)/R; for(let x=0;x<S;x++){ const nx=(x-C)/R, r2=nx*nx+ny*ny; if(r2>1) continue;
+        const r=Math.sqrt(r2), dentro=.86, enCanto=r>dentro;
+        // dentro: la esfera de circuitos; en el canto: lo mismo pero visto a través del cristal grueso (comprimido y aclarado)
+        const k=enCanto? (dentro*(1-Math.pow((r-dentro)/(1-dentro),.6))+ (r-dentro)*.2)/r : 1/dentro;
+        const mx=Math.max(-1,Math.min(1,nx*k)), my=Math.max(-1,Math.min(1,ny*k)), q2=Math.min(.999,mx*mx+my*my);
+        const z=Math.sqrt(1-q2), lon=Math.atan2(mx,z), lat=Math.asin(my);
+        const sx=((Math.floor((lon/Math.PI+.5)*SW*.5)+off)%SW+SW)%SW, sy=Math.min(SH-1,Math.max(0,Math.floor((lat/Math.PI+.5)*SH)));
+        const si=(sy*SW+sx)*4, di=(y*S+x)*4, luzBorde=.6+.4*z;
+        if(enCanto){ const t=(r-dentro)/(1-dentro), b=.55-.25*t, w=30+90*Math.pow(t,3);
+          o[di]=src[si]*b+w; o[di+1]=src[si+1]*b+w; o[di+2]=src[si+2]*b+w+10; o[di+3]=255-80*t; }
+        else { o[di]=src[si]*luzBorde; o[di+1]=src[si+1]*luzBorde; o[di+2]=src[si+2]*luzBorde+10*(1-z); o[di+3]=255; } } }
+      g.putImageData(out,0,0);
+    }
+    const pintarBase=()=>{ pintarFuente(); bg.clearRect(0,0,SW,SH); bg.drawImage(fuente,0,0); };
+    let ultimo=0; function vuelta(t){ if(t-ultimo>45){ ultimo=t; giro+=.7; fotograma(); proyectar(); } requestAnimationFrame(vuelta); }
+    pintarBase(); fotograma(); proyectar(); requestAnimationFrame(vuelta);
+    return { luz(f){ const antes=luz; luz=f; pintarBase(); fotograma(); proyectar();
+      if(f>antes){ const e=document.getElementById('esfera'); e.classList.remove('destello'); void e.offsetWidth; e.classList.add('destello'); } } };
+  })();
+
+  // la tarjeta se inclina un poco hacia el ratón y una luz la sigue
+  document.getElementById('lista').addEventListener('mousemove',e=>{ const t=e.target.closest('.tarea'); if(!t||t.classList.contains('hecha')) return;
+    const r=t.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
+    t.style.setProperty('--mx',(x*100)+'%'); t.style.setProperty('--my',(y*100)+'%');
+    t.style.setProperty('--ry',((x-.5)*3)+'deg'); t.style.setProperty('--rx',((.5-y)*4)+'deg'); });
+  document.getElementById('lista').addEventListener('mouseleave',()=>document.querySelectorAll('.tarea').forEach(t=>{t.style.removeProperty('--rx');t.style.removeProperty('--ry');}));
+
+  // puntos de luz desenfocados que suben despacio detrás de las tarjetas
+  (function(){ const b=document.getElementById('bokeh'); let h='';
+    for(let k=0;k<22;k++){ const t=10+Math.random()*60; h+=`<i style="left:${Math.random()*100}%;top:${10+Math.random()*85}%;width:${t}px;height:${t}px;opacity:.6;animation-duration:${9+Math.random()*12}s;animation-delay:-${Math.random()*12}s"></i>`; }
+    b.innerHTML=h; })();
+
+  // ===== ELLA VIVA =====
+  (function(){
+    const fig=document.querySelector('.figura'), img=document.getElementById('mujer'), hud=document.getElementById('hud');
+    // visor sobre las gafas: coordenadas en la imagen original (1024x1536), con el mismo «cover / center 8%» del CSS
+    const IW=1024, IH=1536, GAF={x:225,y:312,w:520,h:160};
+    function colocar(){ const W=img.offsetWidth, H=img.offsetHeight, k=Math.max(W/IW,H/IH), ox=(W-IW*k)*.5, oy=(H-IH*k)*.08;
+      Object.assign(hud.style,{left:(ox+GAF.x*k)+'px',top:(oy+GAF.y*k)+'px',width:(GAF.w*k)+'px',height:(GAF.h*k)+'px'});
+      const c=document.getElementById('hudTxt'); c.width=GAF.w; c.height=GAF.h; }
+    colocar(); addEventListener('resize',colocar);
+    // texto de visor que pasa por los cristales (reflejo)
+    const hc=document.getElementById('hudTxt').getContext('2d');
+    const lineas=['SYS OK','AGENDA','BPM 124','NOVAH · ONLINE','DECK A · DECK B','SYNC OK','HOY'];
+    let off=0;
+    function hudPinta(){ const c=hc.canvas; hc.clearRect(0,0,c.width,c.height); hc.font='600 13px "Plus Jakarta Sans",sans-serif'; hc.fillStyle='rgba(150,235,255,.9)';
+      for(let i=0;i<8;i++){ const y=((i*26+off)%(c.height+40))-20; hc.fillText(lineas[i], 40+(i%2)*260, y); hc.fillRect(40+(i%2)*260, y+5, 40+((i*37)%60), 1.5); } off+=.35; }
+    // respiración + seguir al ratón (suave)
+    let mx=0,my=0,cx=0,cy=0; addEventListener('mousemove',e=>{ mx=e.clientX/innerWidth-.5; my=e.clientY/innerHeight-.5; });
+    function vuelta(t){ cx+=(mx-cx)*.05; cy+=(my-cy)*.05; const r=Math.sin(t/5000*2*Math.PI);
+      img.style.transform='translate('+(cx*-16)+'px,'+(cy*-10 + r*-2.2)+'px) scale('+(1.03+r*.006)+') rotate('+(cx*-.8)+'deg)';
+      hudPinta(); requestAnimationFrame(vuelta); }
+    requestAnimationFrame(vuelta);
+    // pequeño fallo de holograma de vez en cuando
+    setInterval(()=>{ fig.classList.add('parpadeo'); setTimeout(()=>fig.classList.remove('parpadeo'),200); }, 8000);
+  })();
+
+  // ===== VIDEOLLAMADA =====
+  (function(){
+    const v=document.getElementById('vLorena'), ll=document.getElementById('llamada'), en=document.getElementById('encurso'), cr=document.getElementById('crono');
+    let t0=0, reloj=null;
+    function colgar(){ document.querySelector('.figura').classList.remove('enLlamada'); v.pause(); v.currentTime=0; en.classList.remove('ver'); clearInterval(reloj); if(typeof Lorena!=='undefined') Lorena.calla(); }
+    function contestar(){ ll.classList.remove('ver'); document.querySelector('.figura').classList.add('enLlamada'); v.currentTime=0; v.muted=false; v.play(); en.classList.add('ver'); t0=Date.now();
+      reloj=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); cr.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); },500);
+      if(typeof Lorena!=='undefined') Lorena.habla(); }
+    v.addEventListener('ended', ()=>{ colgar(); setTimeout(leerDia, 600); });
+    document.getElementById('llSi').onclick=()=>{ $('#escuchar').classList.add('hablando'); contestar(); };
+    document.getElementById('llNo').onclick=()=>ll.classList.remove('ver');
+    window.Llamada={contestar, colgar};
+  })();
+
+  // ===== DENTRO DEL LANZADOR: hablar con la ventana de fuera =====
+  (function(){
+    const fuera = m => { try{ parent.postMessage(Object.assign({de:'hoy'}, m), location.origin); }catch(e){} };
+
+    document.querySelector('.barra .cerrar').style.display='none';
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') fuera({tipo:'cerrar'}); });
+    // cada vez que se enciende el holograma, Lorena vuelve a llamar
+    addEventListener('message', e => {
+      if (e.origin !== location.origin || !e.data || e.data.de !== 'lanzador') return;
+      if (e.data.tipo === 'encendido') { if (window.Llamada) Llamada.colgar(); const ll=document.getElementById('llamada'); ll.classList.remove('ver'); setTimeout(()=>ll.classList.add('ver'), 2200); }
+      if (e.data.tipo === 'apagado') { if (window.Llamada) Llamada.colgar(); document.getElementById('llamada').classList.remove('ver'); }
+    });
+  })();
+  if(location.hash==='#ejemplo'){ TAREAS[1].hecha=true; TAREAS[3].hecha=true; }
+
+  // ===== MAQUETA: las marcas SE GUARDAN y «Apúntame algo» =====
+  // Todo queda en la base de datos de esta página (privada, solo tuya). El portátil la lee cada mañana a las 7.
+  const Guardar=(function(){
+    let db=null, dia=null, ocupado=false, otraVez=false;
+    const g=$('#guardado'); const di=t=>{ g.textContent=t; };
+    async function marcas(){
+      if(!db){ di('Sin conexión: esta marca no se guardará.'); return; }
+      if(ocupado){ otraVez=true; return; } ocupado=true; di('Guardando…');
+      const hechas={}; TAREAS.forEach(x=>{ hechas[x.t]=!!x.hecha; });
+      try{ await dia.set({fecha:FECHA, hechas, cuando:new Date().toISOString()}); di('✓ Guardado. El portátil ya lo sabe.'); }
+      catch(e){ di('No se pudo guardar ('+(e&&e.code||'error')+').'); }
+      ocupado=false; if(otraVez){ otraVez=false; marcas(); }
+    }
+    // 15/11: recogido por defecto (una línea «📝 Apuntado para mañana · N»); al tocarla se despliega en filas finas
+    let notasAbiertas=false, ultimasNotas=[];
+    // lo de hoy sigue «Para mañana». El día empieza a las 5:00 (lo que apunta de madrugada cuenta como la noche anterior).
+    const diaDe=t=>{ const d=new Date(new Date(t).getTime()-5*3600e3); return d.getFullYear()*1e4+(d.getMonth()+1)*100+d.getDate(); };
+    function cuandoCorto(t){ const h=t.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}), dif=diaDe(Date.now())-diaDe(t);
+      return (dif<=0?'hoy':dif===1?'ayer':t.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'}))+' '+h; }
+    function pintarNotas(docs){
+      ultimasNotas=docs; const n=$('#notas');
+      if(!docs.length){ n.innerHTML=''; return; }
+      const hoyD=diaDe(Date.now());
+      docs=docs.filter(d=>{ const x=d.data(); return !x.hecha || diaDe(x.hechaEn||x.cuando)>=hoyD; });
+      if(!docs.length){ n.innerHTML=''; return; }
+      const paraHoy=docs.filter(d=>diaDe(d.data().cuando)<hoyD), paraManana=docs.filter(d=>diaDe(d.data().cuando)>=hoyD);
+      const faltan=ds=>ds.filter(d=>!d.data().hecha).length;
+      const cuenta=(tit,ds)=>!ds.length?'':tit+' · '+(faltan(ds)?faltan(ds):'✓ todo hecho');
+      const cab=[cuenta('Para hoy',paraHoy), cuenta('Para mañana',paraManana)].filter(Boolean).join('  ·  ');
+      const fila=d=>'<div class="nota fina'+(d.data().hecha?' hecha':'')+'" data-id="'+d.id+'"><button class="cajaN" type="button" title="Marcar como hecho" aria-label="Marcar como hecho"></button><div class="tx"></div><span class="cu"></span><button class="borrar" title="Borrar">✕</button></div>';
+      const grupo=(tit,ds)=>ds.length?'<div class="grupoNota">'+tit+'</div>'+ds.map(fila).join(''):'';
+      n.innerHTML='<button class="notasCab" type="button">📝 '+cab+'<span>'+(notasAbiertas?'▴':'▾')+'</span></button>'
+        +(notasAbiertas? '<div class="hojita">'+grupo('Para hoy',paraHoy)+grupo('Para mañana',paraManana)+'</div>' : '');
+      if(!notasAbiertas) return;
+      const orden=[...paraHoy,...paraManana];
+      [...n.querySelectorAll('.nota')].forEach((el,i)=>{ const x=orden[i].data(), t=new Date(x.cuando);
+        el.querySelector('.tx').textContent=x.texto;
+        el.querySelector('.cu').textContent=cuandoCorto(t); });
+    }
+    $('#notas').addEventListener('click',e=>{ if(e.target.closest('.notasCab')){ notasAbiertas=!notasAbiertas; pintarNotas(ultimasNotas); } });
+    // 15/11: tocar la cajita de una nota = hecha (se tacha; al día siguiente desaparece sola). Tocar otra vez = desmarcar.
+    $('#notas').addEventListener('click',async e=>{ const c=e.target.closest('button.cajaN'); if(!c||!db) return;
+      const fila=c.closest('.nota'), id=fila.dataset.id, ya=fila.classList.contains('hecha'); fila.classList.toggle('hecha',!ya);
+      try{ await db.collection('notas').doc(id).update({hecha:!ya, hechaEn:new Date().toISOString()}); aviso(ya?'Desmarcado.':'✓ Hecho.'); }
+      catch(_){ fila.classList.toggle('hecha',ya); aviso('No se pudo guardar.'); } });
+    $('#notas').addEventListener('click',async e=>{ const b=e.target.closest('button.borrar'); if(!b||!db) return;
+      const id=b.closest('.nota').dataset.id; try{ await db.collection('notas').doc(id).delete(); aviso('Borrado.'); }catch(_){ aviso('No se pudo borrar.'); } });
+
+    (async()=>{
+      if(!window.claude||!claude.use){ di(''); return; }
+      db=await claude.use('db');
+      if(!db){ di('Abre la página con tu cuenta de Claude para que se guarde.'); return; }
+      dia=db.doc('dias/'+FECHA);
+      const espera=setTimeout(()=>di('Conectando…'),10000);
+      dia.onSnapshot(sn=>{ if(!sn.metadata.fromCache) clearTimeout(espera); if(!sn.exists) return; const h=(sn.data().hechas)||{};
+          let cambio=false; TAREAS.forEach(x=>{ if(x.t in h && !!h[x.t]!==!!x.hecha){ x.hecha=!!h[x.t]; cambio=true; } }); if(cambio) pintar(); },
+        e=>{ clearTimeout(espera); di('No se pueden leer las marcas ahora.'); });
+      db.collection('notas').where('pasada','==',false).onSnapshot(sn=>{ const d=[...sn.docs].sort((a,b)=>String(b.data().cuando).localeCompare(String(a.data().cuando))); pintarNotas(d); },
+        e=>{});
+    })();
+
+    // «Apúntame algo»
+    const p=$('#panelNota'), tx=$('#txtNota'); let dic=null, dicMal=false, base='';
+    const est=(t,c)=>{ const e=$('#estadoNota'); e.textContent=t||''; e.className='estadoNota'+(t?' ver':'')+(c?' '+c:''); };
+    // empezar a escuchar: tiene que llamarse en el mismo toque, sin esperar nada antes
+    function oir(){ base=tx.value.trim(); dic.start({language:'es'}).catch(e=>{ const c=e&&e.code; if(c==='stopped') return;
+      est(c==='not_granted'?'El micro no tiene permiso. Usa el micro del teclado.':c==='dismissed'?'Pulsa «Permitir» para usar el micro.':'El micro no responde ('+c+'). Usa el teclado.','mal');
+      if(c!=='dismissed'){ dicMal=true; $('#micro').hidden=true; } tx.focus(); }); }
+    // DOS toques: «Apúntame algo» ya se pone a escuchar → hablas → ✓ guarda. Sin micro propio: abre el teclado.
+    $('#apunta').onclick=()=>{ tx.value=''; est(''); p.classList.add('ver'); if(dic&&!dicMal) oir(); else tx.focus(); };
+    $('#noNota').onclick=()=>{ if(dic&&dic.active()) dic.stop(); p.classList.remove('ver'); };
+    p.addEventListener('click',e=>{ if(e.target===p) $('#noNota').onclick(); });
+    tx.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#siNota').onclick(); } });
+    $('#siNota').onclick=async()=>{
+      if(dic&&dic.active()) await dic.stop();
+      const t=tx.value.trim(); if(!t){ est('No hay nada escrito. Escribe o pulsa 🎤 y habla.','mal'); tx.focus(); return; }
+      // 15/11: como en Vitito, «pon mi canción / mi música» la pone (no se apunta)
+      if(!db){ est('Sin conexión: no se ha podido guardar.','mal'); return; }
+      est('Guardando…');
+      try{ await db.collection('notas').add({texto:t.slice(0,500), cuando:new Date().toISOString(), pasada:false});
+        tx.value=''; est('✓ Apuntado. Mañana lo tienes en la lista.','ok'); setTimeout(()=>{ p.classList.remove('ver'); est(''); },1600); }
+      catch(e){ est('No se pudo guardar ('+(e&&e.code||'error')+').','mal'); }
+    };
+    // dictado de Claude (si este móvil lo permite); si no, el micro del teclado
+    (async()=>{ if(!window.claude||!claude.use) return; dic=await claude.use('dictation'); if(!dic) return;
+      const m=$('#micro'); m.hidden=false;
+      dic.onPartial(({text})=>{ if(text) tx.value=base+(base?' ':'')+text.trim(); });
+      dic.onFinal(({text})=>{ base=(base?base+text:text.trimStart()); tx.value=base; });
+      dic.onState(({state,reason})=>{ const oye=state!=='idle'; if(state==='listening') est('🔴 Te escucho. Habla y luego pulsa ✓');
+        if(state==='idle'){ if(reason&&!['stopped','viewer_stopped','hidden'].includes(reason)) est('El micro se ha parado ('+reason+'). Escríbelo.','mal'); else if(!tx.value.trim()&&reason!=='hidden') est('No he oído nada. Pulsa 🎤 o escríbelo.','mal'); else est(''); } m.classList.toggle('oye',oye); m.textContent=oye?'⏹':'🎤'; tx.placeholder=oye?(state==='listening'?'Te escucho… habla ahora':'Encendiendo el micro…'):'Apúntame…';
+        p.querySelector('.caja').classList.toggle('oye',oye); });
+      m.onclick=()=>{ if(dic.active()){ dic.stop(); return; } oir(); };
+    })();
+    return {marcas};
+  })();
+  // ===== LORENA EN REPOSO: varios vídeos de Gemini que se alternan al azar con fundido (que no se note el bucle) =====
+  (function(){
+    // 14/11 noche: los vídeos 2-4 NO vuelven a la postura del principio (medido: diferencia 12-20 frente a 1,3 del bucle bueno)
+    // Los de Google Flow (primer y último fotograma = la misma foto) SÍ empalman: medido 1,0. Solo esos en la lista.
+    // + los 3 de Gemini (pelo, tímida, risa) con un «puente» de Flow al final que los devuelve a la foto: uniones medidas 1,9-2,2.
+    // 15/11: TODOS desde la foto SONRIENTE (lorena-frontal-sonrisa.png): nunca vuelve a la cara seria. Empalmes medidos 0,8-1,6.
+    const LISTA=['hoy/novah-s-reposo.mp4?v=1','hoy/novah-s-pelo.mp4?v=1','hoy/novah-s-risa.mp4?v=1','hoy/novah-s-bachata.mp4?v=1','hoy/novah-s-hola-manana.mp4?v=1','hoy/novah-s-hola-tarde.mp4?v=1','hoy/novah-s-hola-noche.mp4?v=1'];
+    const A=document.getElementById('vReposo'); if(!A || LISTA.length<2) return;
+    A.loop=false;
+    const B=A.cloneNode(false); B.removeAttribute('id'); B.removeAttribute('autoplay'); B.style.opacity='0'; A.style.opacity='1';
+    A.after(B);
+    let vis=A, oculto=B, actual=0, cambiando=false;
+    let modoBaile=false, finBaile=null;   // «Con tu música»: pincha en bucle (sin su sonido) mientras suena tu música en Spotify
+    function siguiente(){ if(modoBaile){ const b=LISTA.findIndex(s=>s.includes('bachata')); if(b>=0) return b; }
+      const libres=LISTA.map((s,i)=>i).filter(i=>i!==actual && !LISTA[i].includes('pelo') && !LISTA[i].includes('bachata') && !LISTA[i].includes('hola'));
+      return libres.length? libres[Math.floor(Math.random()*libres.length)] : actual; }
+    function cambiar(forzado, sonido){
+      if(cambiando) return; cambiando=true; actual=(forzado!=null && forzado>=0)?forzado:siguiente();
+      oculto.src=LISTA[actual]; oculto.currentTime=0; oculto.muted=!sonido;
+      const p=oculto.play(); (p&&p.catch?p:Promise.resolve()).catch(()=>{});
+      oculto.style.opacity='1'; vis.style.opacity='0';
+      const viejo=vis; vis=oculto; oculto=viejo;
+      setTimeout(()=>{ viejo.pause(); cambiando=false; }, 700);
+    }
+    [A,B].forEach(v=>{
+      v.addEventListener('timeupdate',()=>{ if(v===vis && v.duration && v.currentTime>v.duration-0.7) cambiar(); });
+      v.addEventListener('ended',()=>{ if(v===vis) cambiar(); });
+      v.addEventListener('error',()=>{ if(v===vis){ cambiando=false; LISTA.splice(actual,1); actual=0; if(LISTA.length) cambiar(); } });
+    });
+    // REACCIONES (14/11): al abrir se ríe; si la tocas, se ríe o se coloca el pelo; con todo hecho, se ríe.
+    const idx=n=>LISTA.findIndex(s=>s.includes(n));
+    window.LorenaReacciona=(n, sonido)=>{ const i=idx(n); if(i<0) return; cambiando=false; cambiar(i, sonido); };
+    // «¿Bailamos?»: baila bachata con su música (el sonido solo se puede dar desde el toque del botón)
+    const bB=document.getElementById('bailar');
+    if(bB) bB.addEventListener('click',()=>{ pararBaile(); if(window.pararVozDia) window.pararVozDia(); window.scrollTo({top:0,behavior:'smooth'}); window.LorenaReacciona('bachata', true); });
+    const bC=document.getElementById('chayanne');
+    function pararBaile(){ if(!modoBaile) return; modoBaile=false; clearTimeout(finBaile); if(bC) bC.textContent='🎵 Con tu música'; }
+    if(bC) bC.addEventListener('click',()=>{
+      if(modoBaile){ pararBaile(); return; }
+      window.open('https://open.spotify.com/search/techno%20house','_blank');
+      modoBaile=true; bC.textContent='⏹ Parar el baile';
+      window.scrollTo({top:0,behavior:'smooth'}); window.LorenaReacciona('bachata', false);
+      finBaile=setTimeout(pararBaile, 5*60*1000); });
+    // PANTALLA NEGRA: doble toque → ella aparece poco a poco riéndose (si no hay telón, se ríe al abrir como antes)
+    const telon=document.getElementById('telon');
+    if(telon){ let ult=0;
+      const despertar=()=>{ if(telon.classList.contains('fuera')) return; telon.classList.add('fuera'); window._despertadaEn=Date.now();
+        // «¡Hola, Vic! Buenos días / Buenas tardes / Buenas noches» según la hora, con su risita nerviosa
+        const hh=new Date().getHours(); window.LorenaReacciona(hh>=6&&hh<14?'hola-manana':hh>=14&&hh<20?'hola-tarde':'hola-noche', true);   // «¡Hola!» con cara de enamorada
+        // fundido lento con la API de animaciones (más fiable que la transición CSS en el móvil)
+        try{ telon.animate([{opacity:1},{opacity:1,offset:.08},{opacity:0}],{duration:3000,easing:'ease-in-out',fill:'forwards'}); }catch(_){ telon.style.opacity='0'; } };
+      telon.addEventListener('pointerup',()=>{ const t=Date.now(); if(t-ult<450){ despertar(); } ult=t; });
+      telon.addEventListener('dblclick',despertar);
+    } else setTimeout(()=>window.LorenaReacciona('risa'), 1200);
+    // «Los vídeos de Lorena»: tocas uno y lo hace (las bachatas con su música)
+    document.querySelectorAll('.galeria button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation();
+      window.scrollTo({top:0,behavior:'smooth'}); document.querySelectorAll('*').forEach(x=>{ if(x.scrollTop>0 && x!==document.querySelector('.galeria .fila')) x.scrollTo({top:0,behavior:'smooth'}); });
+      window.LorenaReacciona(b.dataset.v, !!b.dataset.sonido); }));
+    let ultimoToque=0;
+    // la figura está debajo de otras capas: se mira si el toque cae sobre ella (y no sobre un botón o una tarea)
+    document.addEventListener('click',e=>{
+      if(e.target.closest('button,.tarea,.lista,.panelNota,.notas,.pie,.apunta,.barra,input,textarea,.telon,.galeria')) return;
+      if(Date.now()-(window._despertadaEn||0)<7000) return;   // mientras dice «¡Hola!», que no la interrumpa el toque
+      const r=document.querySelector('.figura').getBoundingClientRect();
+      if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) return;
+      const t=Date.now(); if(t-ultimoToque<2500) return; ultimoToque=t;
+      window.LorenaReacciona('pelo'); });
+  })();
+  // 14/11: en el móvil, lo que sube por encima de la cara de Lorena (mitad de arriba) se desvanece: nada de letras sobre sus ojos
+  (function(){
+    const zona=()=>(innerWidth<=760?(window._barraH||0):0)+innerHeight*0.42, fundido=()=>innerHeight*0.14;   // 15/11: + la barra fija de arriba
+    function aplicar(){
+      const movil=innerWidth<=760;
+      // 15/11: las notas se funden RENGLÓN a renglón (no la hojita entera), si no la última nota no se leía
+      document.querySelectorAll('.izq > *, .lista > .tarea, #notas .notasCab, #notas .grupoNota, #notas .nota').forEach(el=>{
+        if(el.classList.contains('lista')||el.id==='notas'||el.classList.contains('apunta')){ el.style.opacity=''; el.style.pointerEvents=''; return; }
+        if(!movil){ el.style.opacity=''; return; }
+        const t=el.getBoundingClientRect().top;
+        const o=Math.max(0,Math.min(1,(t-(zona()-fundido()))/fundido()));
+        el.style.opacity=o.toFixed(2); el.style.pointerEvents=o<.15?'none':'';
+      });
+    }
+    addEventListener('scroll',aplicar,{passive:true}); addEventListener('resize',aplicar);
+    document.addEventListener('scroll',aplicar,{passive:true,capture:true});
+    setTimeout(aplicar,300);
+  })();
+  // 15/11: en el móvil los 3 botones suben a la barra (fila del reloj); en el portátil vuelven a su sitio
+  (function(){
+    const barra=document.querySelector('.barra'), acc=document.querySelector('.accL'), lor=document.getElementById('lorena');
+    const fila=document.createElement('div'); fila.className='filaArriba'; barra.appendChild(fila);
+    const sitio=document.createComment('botones'); acc.parentNode.insertBefore(sitio, acc);
+    function colocar(){
+      if(innerWidth<=760){ if(acc.parentNode!==fila){ fila.appendChild(acc); fila.appendChild(lor); } }
+      else if(acc.parentNode===fila){ sitio.parentNode.insertBefore(lor, sitio); sitio.parentNode.insertBefore(acc, sitio.nextSibling); }
+    }
+    // 15/11: la barra queda FIJA arriba en el móvil; el vídeo se pega justo debajo de ella
+    function alto(){ window._barraH = innerWidth<=760 ? barra.offsetHeight : 0; document.documentElement.style.setProperty('--barraH', window._barraH+'px'); }
+    colocar(); alto(); addEventListener('resize', ()=>{ colocar(); alto(); });
+  })();
+  reloj(); setInterval(reloj, 20000); pintar();
+  // ===== 15/11 · MÚSICA DE FONDO BAJITA, hecha por la propia app (sin archivos, sin derechos de autor) =====
+  // Botón 🎵: Lo-fi cálido → Ambiente → Piano de noche → Apagada. Se baja sola cuando Lorena habla, saluda o baila.
+  (function(){
+    const ESTILOS=[['lofi','Lo-fi cálido'],['ambiente','Ambiente'],['piano','Piano de noche'],['no','Apagada']];
+    let pref='lofi'; try{ pref=localStorage.getItem('lorenaMusica')||'lofi'; }catch(_){}
+    const btn=document.getElementById('musica');
+    let ctx=null, master=null, salida=null, timer=null, proximo=0, compas=0, sonandoEstilo=null;
+    const VOL=0.16;
+    const hz=m=>440*Math.pow(2,(m-69)/12);
+    // Re mayor, cálido: Dmaj7 · Bm7 · Gmaj7 · A6
+    const ACORDES=[[62,66,69,73],[59,62,66,69],[55,59,62,66],[57,61,64,66]];
+    function montar(){
+      ctx=new (window.AudioContext||window.webkitAudioContext)();
+      master=ctx.createGain(); master.gain.value=0;
+      const filtro=ctx.createBiquadFilter(); filtro.type='lowpass'; filtro.frequency.value=2600;
+      const rev=ctx.createConvolver(); const len=ctx.sampleRate*3.2, ir=ctx.createBuffer(2,len,ctx.sampleRate);
+      for(let c=0;c<2;c++){ const d=ir.getChannelData(c); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6); }
+      rev.buffer=ir; const seco=ctx.createGain(); seco.gain.value=.75; const mojado=ctx.createGain(); mojado.gain.value=.38;
+      salida=ctx.createGain(); salida.connect(seco); salida.connect(rev); rev.connect(mojado);
+      seco.connect(filtro); mojado.connect(filtro); filtro.connect(master); master.connect(ctx.destination);
+    }
+    function nota(m,t,dur,vol,tipo){   // piano eléctrico suave
+      const o=ctx.createOscillator(), o2=ctx.createOscillator(), g=ctx.createGain(), g2=ctx.createGain();
+      o.type=tipo||'sine'; o.frequency.value=hz(m); o2.type='sine'; o2.frequency.value=hz(m)*2.003; g2.gain.value=.18;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.015); g.gain.exponentialRampToValueAtTime(vol*.35,t+.5); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+      o.connect(g); o2.connect(g2); g2.connect(g); g.connect(salida); o.start(t); o2.start(t); o.stop(t+dur+.05); o2.stop(t+dur+.05);
+    }
+    function colchon(m,t,dur,vol){    // pad lento
+      const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=900; const g=ctx.createGain();
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+dur*.35); g.gain.linearRampToValueAtTime(0,t+dur);
+      [-6,6].forEach(det=>{ const o=ctx.createOscillator(); o.type='sawtooth'; o.frequency.value=hz(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+dur+.1); });
+      f.connect(g); g.connect(salida);
+    }
+    function crujido(t,dur){          // disco de vinilo, muy flojito
+      const b=ctx.createBuffer(1,ctx.sampleRate*dur,ctx.sampleRate), d=b.getChannelData(0);
+      for(let i=0;i<d.length;i++) d[i]=Math.random()<.0009?(Math.random()*2-1)*.6:(Math.random()*2-1)*.012;
+      const s=ctx.createBufferSource(); s.buffer=b; const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=3000; const g=ctx.createGain(); g.gain.value=.5;
+      s.connect(f); f.connect(g); g.connect(salida); s.start(t);
+    }
+    function compasDe(estilo,t){
+      const ac=ACORDES[compas%4], raiz=ac[0];
+      if(estilo==='lofi'){ const L=4.4;       // ~55 ppm, perezoso
+        nota(raiz-24,t,L*.9,.20); ac.forEach((m,i)=>nota(m,t+i*.03,2.2,.075));
+        ac.slice(1).forEach((m,i)=>nota(m,t+L*.62+i*.03,1.6,.05)); crujido(t,L); return L; }
+      if(estilo==='ambiente'){ const L=8;
+        ac.forEach(m=>colchon(m-12,t,L+2,.035)); if(compas%2===0) nota(ac[2]+12,t+2.5,4,.05); return L; }
+      const L=4.8;                            // piano de noche: arpegio tranquilo
+      nota(raiz-12,t,L,.12); const orden=[0,2,1,3,2,1];
+      orden.forEach((k,i)=>nota(ac[k]+12,t+.4+i*.72,2.2,.06)); return L;
+    }
+    function programar(){
+      if(!ctx||!sonandoEstilo) return;
+      while(proximo<ctx.currentTime+1.5){ proximo+=compasDe(sonandoEstilo,proximo); compas++; }
+    }
+    // ¿suena Lorena? (la voz del día, los saludos o un vídeo con sonido) → la música baja casi a cero
+    function haySonido(){
+      try{ if(!vozLorena.paused) return true; if(Object.values(SALUDOS).some(a=>!a.paused)) return true; }catch(_){}
+      return [...document.querySelectorAll('video,audio')].some(v=>!v.paused&&!v.muted&&v.volume>0);
+    }
+    function volumen(){
+      if(!ctx||!master) return;
+      const objetivo=!sonandoEstilo?0:(haySonido()?0.0:VOL);
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setTargetAtTime(objetivo, ctx.currentTime, objetivo>master.gain.value?1.2:0.25);
+    }
+    function sonar(estilo){
+      if(estilo==='no'){ sonandoEstilo=null; volumen(); return; }
+      if(!ctx) montar();
+      if(ctx.state==='suspended') ctx.resume();
+      sonandoEstilo=estilo; compas=0; proximo=Math.max(proximo,ctx.currentTime+.1);
+      if(!timer) timer=setInterval(()=>{ programar(); volumen(); },250);
+      programar(); volumen();
+    }
+    function pintarBtn(){ if(!btn) return; btn.classList.toggle('apagada',pref==='no');
+      btn.title='Música: '+ESTILOS.find(e=>e[0]===pref)[1]+' (toca para cambiar)'; }
+    pintarBtn();
+    if(btn) btn.addEventListener('click',e=>{ e.stopPropagation();
+      const i=ESTILOS.findIndex(x=>x[0]===pref); pref=ESTILOS[(i+1)%ESTILOS.length][0];
+      try{ localStorage.setItem('lorenaMusica',pref); }catch(_){}
+      pintarBtn(); sonar(pref); aviso('🎵 Música: '+ESTILOS.find(x=>x[0]===pref)[1]); });
+    // el navegador solo deja sonar tras un toque: arranca con el primer toque (el doble toque de la pantalla negra)
+    const arrancar=e=>{ if(e&&e.target&&e.target.closest&&e.target.closest('#musica')) return; if(pref!=='no'&&!sonandoEstilo) sonar(pref); };
+    document.addEventListener('pointerdown',arrancar,{capture:true});
+    document.addEventListener('keydown',arrancar,{capture:true});
+    window.LorenaMusica={sonar, estado:()=>({pref, sonandoEstilo, vol:master?master.gain.value:0, ctx:ctx&&ctx.state})};
+  })();
+  // 15/11: QUITADO «mi canción» de YouTube: dentro de Claude YouTube sale BLOQUEADO (ni incrustado ni en pestaña nueva).
+</script>
