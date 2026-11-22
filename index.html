@@ -599,7 +599,7 @@
   </filter>
 </svg>
 <div class="holo" id="holo">
-  <video class="fondoCiudad" src="hoy/fondo-ciudad.mp4?v=1" autoplay muted loop playsinline aria-hidden="true"></video>
+  <video class="fondoCiudad" src="hoy/fondo-ciudad.mp4?v=3" autoplay muted loop playsinline aria-hidden="true"></video>
   <div class="barra">
     <div style="display:flex;align-items:center">
       <div class="marca"><span class="ini">N</span>NOVAH DJ</div><button class="musicaBtn" id="musica" type="button" aria-label="Música de fondo">🎵</button>
@@ -607,7 +607,7 @@
     <div class="reloj"><div class="fecha" id="fecha"></div><div class="hora" id="hora"></div><div class="cerrar">✕</div></div>
   </div>
 
-  <div class="figura"><div class="img" id="mujer"><video id="vReposo" src="hoy/novah-s-reposo.mp4?v=1" autoplay muted loop playsinline></video><video id="vLorena" src="hoy/novah-habla.mp4?v=g2" poster="hoy/novah-reposo.jpg" playsinline preload="auto"></video><div class="hud" id="hud"><canvas id="hudTxt"></canvas><i class="scan"></i><i class="brilloVoz" id="brilloVoz"></i></div></div><i class="rim"></i><i class="holoScan"></i></div>
+  <div class="figura"><div class="img" id="mujer"><video id="vReposo" src="hoy/novah-s-reposo.mp4?v=3" autoplay muted loop playsinline></video><video id="vLorena" src="hoy/novah-habla.mp4?v=g2" poster="hoy/novah-reposo.jpg" playsinline preload="auto"></video><div class="hud" id="hud"><canvas id="hudTxt"></canvas><i class="scan"></i><i class="brilloVoz" id="brilloVoz"></i></div></div><i class="rim"></i><i class="holoScan"></i></div>
   <div class="lorena" id="lorena"><i class="punto"></i><span>NOVAH</span><span class="ondasL"><b></b><b></b><b></b><b></b><b></b></span></div>
   <div class="accL"><button class="escuchar" id="escuchar">🔊 Escuchar el día</button><button class="escuchar bailar" id="bailar">🎧 ¿Pinchamos?</button></div>
 
@@ -703,7 +703,7 @@
   const TXT_ESCUCHAR='🔊 Escuchar el día';
   function botonVoz(t){ const b=$('#escuchar'); b.textContent=t; b.classList.toggle('hablando', t.startsWith('⏸')); }
   // 15/11: delante de la lectura, el saludo según la HORA REAL al pulsar (misma voz, grabado una vez)
-  const SALUDOS={m:new Audio('hoy/saludo-manana.mp3?v=1'), t:new Audio('hoy/saludo-tarde.mp3?v=1'), n:new Audio('hoy/saludo-noche.mp3?v=1')};
+  const SALUDOS={m:new Audio('hoy/saludo-manana.mp3?v=3'), t:new Audio('hoy/saludo-tarde.mp3?v=3'), n:new Audio('hoy/saludo-noche.mp3?v=3')};
   const saludoAhora=()=>{ const h=new Date().getHours(); return h>=6&&h<14?SALUDOS.m:(h>=14&&h<20?SALUDOS.t:SALUDOS.n); };
   let enSaludo=null;
   function tocarDia(){   // la lectura en sí (después del saludo)
@@ -994,7 +994,7 @@
     // Los de Google Flow (primer y último fotograma = la misma foto) SÍ empalman: medido 1,0. Solo esos en la lista.
     // + los 3 de Gemini (pelo, tímida, risa) con un «puente» de Flow al final que los devuelve a la foto: uniones medidas 1,9-2,2.
     // 15/11: TODOS desde la foto SONRIENTE (lorena-frontal-sonrisa.png): nunca vuelve a la cara seria. Empalmes medidos 0,8-1,6.
-    const LISTA=['hoy/novah-s-reposo.mp4?v=1','hoy/novah-s-pelo.mp4?v=1','hoy/novah-s-risa.mp4?v=1','hoy/novah-s-bachata.mp4?v=1','hoy/novah-s-hola-manana.mp4?v=1','hoy/novah-s-hola-tarde.mp4?v=1','hoy/novah-s-hola-noche.mp4?v=1'];
+    const LISTA=['hoy/novah-s-reposo.mp4?v=3','hoy/novah-s-pelo.mp4?v=3','hoy/novah-s-risa.mp4?v=3','hoy/novah-s-bachata.mp4?v=3','hoy/novah-s-hola-manana.mp4?v=3','hoy/novah-s-hola-tarde.mp4?v=3','hoy/novah-s-hola-noche.mp4?v=3'];
     const A=document.getElementById('vReposo'); if(!A || LISTA.length<2) return;
     A.loop=false;
     const B=A.cloneNode(false); B.removeAttribute('id'); B.removeAttribute('autoplay'); B.style.opacity='0'; A.style.opacity='1';
@@ -1176,5 +1176,6 @@
   })();
   // 15/11: QUITADO «mi canción» de YouTube: dentro de Claude YouTube sale BLOQUEADO (ni incrustado ni en pestaña nueva).
 </script>
+
 
 
