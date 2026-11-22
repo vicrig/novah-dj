@@ -256,7 +256,7 @@
   /* ===== 14/11 · VIDEOLLAMADA con Lorena: vídeo real (foto animada con IA, demo gratis de Hugging Face, MoDA) ===== */
   .figura .img{background:none !important}
   .figura .img{filter:none !important}
-  .figura .img video{position:absolute;top:11%;left:0;right:0;width:100%;height:100%;object-fit:cover;object-position:50% 0%;
+  .figura .img video{position:absolute;top:11%;left:0;right:0;width:100%;height:100%;object-fit: contain;object-position:50% 0%;
        transform:scale(1.05);transform-origin:50% 0%;
        -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 14%);mask-image:linear-gradient(to bottom,transparent 0%,#000 14%)}
   /* 14/11: «manos inmóviles, hombros petrificados» -> encuadre de videollamada: solo cara y arranque de hombros */
@@ -446,7 +446,7 @@
   .figura .img video{filter:saturate(1.02) sepia(.12) brightness(1.02)}
   .figura::after{background:radial-gradient(ellipse 60% 70% at 50% 40%,transparent 55%,rgba(255,190,120,.10) 80%,transparent 100%) !important}
   /* 15/11 · DETRÁS DEL CRISTAL: el estudio de noche con la ciudad en movimiento (vídeo en bucle, desenfocado y en penumbra) */
-  .fondoCiudad{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;
+  .fondoCiudad{position:absolute;inset:0;width:100%;height:100%;object-fit: contain;z-index:0;pointer-events:none;
     filter:blur(2.5px) brightness(.55) saturate(1.15) sepia(.12);opacity:.95;transform:scale(1.04)}
   @media (max-width:760px){ .fondoCiudad{position:fixed;object-position:58% 50%} }
   /* 15/11 · notas apuntadas: recogidas en una línea; desplegadas, filas finas */
@@ -486,7 +486,7 @@
   .galeria .fila{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
   .galeria .fila::-webkit-scrollbar{display:none}
   .galeria button{flex:none;width:92px;padding:0;border:none;background:none;cursor:pointer;scroll-snap-align:start;color:var(--muted);font:inherit}
-  .galeria img{display:block;width:92px;height:92px;object-fit:cover;border-radius:18px;border:1px solid rgba(255,255,255,.18);
+  .galeria img{display:block;width:92px;height:92px;object-fit: contain;border-radius:18px;border:1px solid rgba(255,255,255,.18);
     box-shadow:0 6px 18px rgba(0,0,0,.35);transition:transform .2s}
   .galeria button:active img{transform:scale(.94)}
   .galeria span{display:block;margin-top:6px;font-size:.72rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
